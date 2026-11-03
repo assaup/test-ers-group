@@ -172,6 +172,82 @@ describe('EmployeesPage: search and filter', () => {
   });
 });
 
+describe('EmployeesPage: filters from the URL', () => {
+  it.each(['/employees?dept=0', `/employees?q=${'я'.repeat(101)}`, '/employees?dept=0x1'])(
+    'ignores invalid filters in %s instead of showing an error',
+    async (url) => {
+      const { calls } = mockApi(fakeEmployeesBackend().routes);
+
+      renderApp(url);
+
+      expect(await screen.findByText('Найдено: 5')).toBeInTheDocument();
+      expect(listCalls(calls).every((call) => call.query.toString() === '')).toBe(true);
+      await waitFor(() => {
+        expect(screen.getByTestId('location')).toHaveTextContent(/^\/employees$/);
+      });
+    },
+  );
+
+  it('drops a department that does not exist', async () => {
+    mockApi(fakeEmployeesBackend().routes);
+
+    renderApp('/employees?dept=999&q=ов');
+
+    await waitFor(() => {
+      expect(screen.getByTestId('location')).toHaveTextContent(/^\/employees\?q=ов$/);
+    });
+    expect(await screen.findByText('Найдено: 5')).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'Отдел' })).toHaveValue('');
+  });
+
+  it('limits the search field to what the API accepts', async () => {
+    mockApi(fakeEmployeesBackend().routes);
+
+    renderApp('/employees');
+
+    expect(await screen.findByRole('searchbox', { name: 'Поиск по ФИО' })).toHaveAttribute(
+      'maxlength',
+      '100',
+    );
+  });
+
+  it('explains a rejected filter instead of blaming the network', async () => {
+    const { routes } = fakeEmployeesBackend();
+    mockApi({
+      ...routes,
+      'GET /api/employees': (call) =>
+        call.query.get('search')
+          ? apiError(400, 'VALIDATION_ERROR', { search: 'Слишком длинный поисковый запрос' })
+          : routes['GET /api/employees'](call),
+    });
+    const { user } = renderApp('/employees?q=иван');
+
+    expect(await screen.findByText('Не удалось применить фильтры')).toBeInTheDocument();
+    expect(screen.queryByText(/Проверьте подключение/)).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Сбросить фильтры' }));
+
+    expect(await screen.findByText('Найдено: 5')).toBeInTheDocument();
+  });
+
+  it('resets filters with a single request and no stale search', async () => {
+    const { calls } = mockApi(fakeEmployeesBackend().routes);
+    const { user } = renderApp('/employees?q=сидоров&dept=4');
+    await screen.findByText('Никого не нашли');
+    const before = listCalls(calls).length;
+
+    await user.click(screen.getByRole('button', { name: 'Сбросить фильтры' }));
+    await screen.findByText('Найдено: 5');
+    // Wait past the debounce delay to catch a late request with the old text
+    await new Promise((resolve) => setTimeout(resolve, 400));
+
+    expect(
+      listCalls(calls)
+        .slice(before)
+        .map((call) => call.query.toString()),
+    ).toEqual(['']);
+  });
+});
+
 describe('EmployeesPage: adding an employee', () => {
   async function openDialog() {
     const backend = fakeEmployeesBackend();

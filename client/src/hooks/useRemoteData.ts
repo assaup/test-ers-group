@@ -8,6 +8,7 @@ interface Settled<T> {
   attempt: number;
   ok: boolean;
   data: T | undefined;
+  error: unknown;
 }
 
 export type RemoteStatus = 'loading' | 'success' | 'error';
@@ -28,11 +29,12 @@ export function useRemoteData<T>(load: Loader<T>) {
       (data) => {
         // A response can still arrive after abort(); it belongs to an outdated request
         if (controller.signal.aborted) return;
-        setSettled({ load, attempt, ok: true, data });
+        setSettled({ load, attempt, ok: true, data, error: undefined });
         setLastData(data);
       },
       (error: unknown) => {
-        if (!isAbortError(error)) setSettled({ load, attempt, ok: false, data: undefined });
+        if (controller.signal.aborted || isAbortError(error)) return;
+        setSettled({ load, attempt, ok: false, data: undefined, error });
       },
     );
     return () => {
@@ -48,5 +50,11 @@ export function useRemoteData<T>(load: Loader<T>) {
     setAttempt((count) => count + 1);
   }, []);
 
-  return { status, data: isCurrent && settled.ok ? settled.data : lastData, reload };
+  return {
+    status,
+    data: isCurrent && settled.ok ? settled.data : lastData,
+    /** The failure of the current request, when status is "error". */
+    error: isCurrent ? settled.error : undefined,
+    reload,
+  };
 }
