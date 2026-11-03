@@ -5,15 +5,18 @@
   "description": "Employees list: React + Express + SQLite",
   "type": "module",
   "workspaces": [
-    "client",
-    "server"
+    "shared",
+    "server",
+    "client"
   ],
   "engines": {
     "node": ">=24"
   },
   "scripts": {
     "dev": "concurrently -n server,client -c blue,magenta \"npm:dev -w server\" \"npm:dev -w client\"",
-    "build": "npm run build --workspaces",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "smoke": "npm run smoke -w server",
     "start": "npm run start -w server",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -36,6 +39,7 @@
     "lint-staged": "^17.6.0",
     "prettier": "^3.9.10",
     "typescript": "~6.0.3",
-    "typescript-eslint": "^8.72.1"
+    "typescript-eslint": "^8.72.1",
+    "vitest": "^5.1.0"
   }
 }

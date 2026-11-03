@@ -31,12 +31,14 @@ npm run dev
 | `npm run lint`      | ESLint с проверкой типов            |
 | `npm run format`    | Prettier                            |
 | `npm run typecheck` | `tsc` по всем пакетам               |
+| `npm test`          | тесты (Vitest) во всех пакетах      |
 
 ## Структура
 
 ```
 client/    React-приложение (Vite)
 server/    Express API + SQLite
+shared/    zod-схемы и типы, общие для клиента и сервера
 agents/    архитектура, roadmap, соглашения, ADR, дизайн-бриф
 ```
 
