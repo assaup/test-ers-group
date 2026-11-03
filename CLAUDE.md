@@ -14,7 +14,8 @@ SQLite. Подробный контекст — в [`agents/`](agents/README.md)
 
 - Стек задан заданием и не меняется: никаких UI-библиотек, CSS-фреймворков и ORM.
 - Нативные npm-модули не добавлять (ADR 002, 004). SQLite — через `node:sqlite`.
-- SQL — только с плейсхолдерами `?` и только в `*.repository.ts`.
+- SQL — только с плейсхолдерами `?` и только в `*.repository.ts` и `server/src/db/`.
+- Каждый этап roadmap закрывается своими тестами; `npm test` зелёный перед коммитом.
 - Все маршруты `/api/*`, кроме `auth/register`, `auth/login` и `health`, — под `requireAuth`.
 - Валидация входных данных — zod-схемами из `shared`, одинаковыми на клиенте и сервере.
 - Пароли и токены не логировать и не возвращать в ответах.
@@ -26,6 +27,7 @@ SQLite. Подробный контекст — в [`agents/`](agents/README.md)
 npm run dev          # сервер :3000 + клиент :5173
 npm run lint         # ESLint с проверкой типов
 npm run typecheck
+npm test             # Vitest во всех пакетах
 npm run build
 npm run format
 ```

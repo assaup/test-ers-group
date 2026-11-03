@@ -86,8 +86,9 @@ employees (
 | POST  | `/api/employees`     | да   | `{ fullName, position, departmentId }` | 201 `{ employee }`      |
 | GET   | `/api/health`        | —    | —                                      | 200 `{ status: "ok" }`  |
 
-Коды ошибок: `400 VALIDATION_ERROR`, `401 UNAUTHORIZED`, `401 INVALID_CREDENTIALS`,
-`409 EMAIL_TAKEN`, `429 TOO_MANY_REQUESTS`, `500 INTERNAL_ERROR`.
+Коды ошибок: `400 VALIDATION_ERROR` (в том числе битый JSON), `401 UNAUTHORIZED`,
+`401 INVALID_CREDENTIALS`, `404 NOT_FOUND` (неизвестный `/api/*`), `409 EMAIL_TAKEN`,
+`413 VALIDATION_ERROR` (тело больше 10 КБ), `429 TOO_MANY_REQUESTS`, `500 INTERNAL_ERROR`.
 
 Детали поведения:
 
@@ -105,7 +106,7 @@ server/src/
 ├─ index.ts              точка входа: открыть БД, migrate, seed, listen
 ├─ app.ts                createApp({ db }) — сборка Express; без listen, удобно для supertest
 ├─ config.ts             переменные окружения с дефолтами
-├─ db/                   connection.ts, migrations.ts, migrate.ts, seed.ts
+├─ db/                   connection.ts (+ transaction), migrations.ts, migrate.ts, seed.ts
 ├─ lib/                  errors.ts (AppError), password.ts (scrypt), session-token.ts
 ├─ middleware/           require-auth.ts, validate.ts, error-handler.ts
 └─ modules/
