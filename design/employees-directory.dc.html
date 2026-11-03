@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#e9ebef;font-family:'Golos Text',system-ui,-apple-system,'Segoe UI',sans-serif;color:#1a1d23;-webkit-font-smoothing:antialiased}
+a{color:#2f5bd3;text-decoration:none}
+a:hover{color:#2549b0;text-decoration:underline}
+</style>
+</helmet>
+<div style="padding:72px;display:flex;flex-direction:column;gap:96px;min-width:2600px">
+
+<header style="display:flex;flex-direction:column;gap:8px;max-width:900px">
+  <div style="font-size:14px;color:#5b6270">Дизайн-макеты · ноябрь 2026</div>
+  <h1 style="margin:0;font-size:44px;font-weight:600;letter-spacing:-0.02em">Справочник сотрудников</h1>
+  <p style="margin:0;font-size:18px;line-height:1.5;color:#5b6270;text-wrap:pretty">Внутренний HR-инструмент. Токены, компоненты и четыре экрана со всеми состояниями. Шрифт — Golos Text (кириллица), шкала отступов 4 px, светлая и тёмная темы на одних токенах.</p>
+</header>
+
+<!-- ============ ТОКЕНЫ ============ -->
+<section data-screen-label="01 Токены" style="display:flex;flex-direction:column;gap:32px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font-size:14px;color:#5b6270;font-family:'JetBrains Mono',monospace">01</span><h2 style="margin:0;font-size:32px;font-weight:600">Токены</h2></div>
+  <div style="display:flex;gap:40px;align-items:flex-start">
+    <div style="display:flex;flex-direction:column;gap:32px;width:1100px">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="font-size:15px;font-weight:600">Цвета · светлая / тёмная</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+          <sc-for list="{{ colorTokens }}" as="c" hint-placeholder-count="12">
+            <div style="background:#fff;border:1px solid #dde1e7;border-radius:12px;overflow:hidden">
+              <div style="display:grid;grid-template-columns:1fr 1fr;height:56px">
+                <div style="background:{{ c.light }};border-right:1px solid rgba(0,0,0,.06)"></div>
+                <div style="background:{{ c.dark }}"></div>
+              </div>
+              <div style="padding:10px 12px;display:flex;flex-direction:column;gap:2px">
+                <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#1a1d23">{{ c.name }}</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#5b6270">{{ c.light }} · {{ c.dark }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="font-size:15px;font-weight:600">Метки отделов</div>
+        <div style="display:flex;gap:24px;background:#fff;border:1px solid #dde1e7;border-radius:12px;padding:20px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <sc-for list="{{ depts }}" as="d" hint-placeholder-count="5">
+              <span style="display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:6px;font-size:13px;font-weight:500;background:{{ d.bg }};color:{{ d.fg }}">{{ d.name }}</span>
+            </sc-for>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;background:#1a1d23;border-radius:8px;padding:12px">
+            <sc-for list="{{ depts }}" as="d" hint-placeholder-count="5">
+              <span style="display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:6px;font-size:13px;font-weight:500;background:{{ d.dbg }};color:{{ d.dfg }}">{{ d.name }}</span>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:24px">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="font-size:15px;font-weight:600">Типографика</div>
+          <div style="background:#fff;border:1px solid #dde1e7;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:14px">
+            <div style="display:flex;align-items:baseline;gap:16px"><span style="width:110px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#5b6270">32 / 600</span><span style="font-size:32px;font-weight:600;letter-spacing:-0.01em">Сотрудники</span></div>
+            <div style="display:flex;align-items:baseline;gap:16px"><span style="width:110px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#5b6270">24 / 600</span><span style="font-size:24px;font-weight:600">Вход в справочник</span></div>
+            <div style="display:flex;align-items:baseline;gap:16px"><span style="width:110px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#5b6270">20 / 600</span><span style="font-size:20px;font-weight:600">Новый сотрудник</span></div>
+            <div style="display:flex;align-items:baseline;gap:16px"><span style="width:110px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#5b6270">15 / 500</span><span style="font-size:15px;font-weight:500">Иванова Анна Сергеевна</span></div>
+            <div style="display:flex;align-items:baseline;gap:16px"><span style="width:110px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#5b6270">14 / 400</span><span style="font-size:14px">Руководитель отдела</span></div>
+            <div style="display:flex;align-items:baseline;gap:16px"><span style="width:110px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#5b6270">13 / 400</span><span style="font-size:13px;color:#5b6270">Не меньше 8 символов</span></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="font-size:15px;font-weight:600">Отступы · радиусы · тени</div>
+          <div style="background:#fff;border:1px solid #dde1e7;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:20px">
+            <div style="display:flex;align-items:flex-end;gap:10px">
+              <sc-for list="{{ spaces }}" as="s" hint-placeholder-count="9">
+                <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:{{ s.px }};height:{{ s.px }};background:#e8eefc;border:1px solid #b9c9f2"></div><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5b6270">{{ s.v }}</span></div>
+              </sc-for>
+            </div>
+            <div style="display:flex;gap:16px">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:48px;height:48px;border:1px solid #c4cad3;border-radius:6px"></div><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5b6270">sm 6</span></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:48px;height:48px;border:1px solid #c4cad3;border-radius:8px"></div><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5b6270">md 8</span></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:48px;height:48px;border:1px solid #c4cad3;border-radius:12px"></div><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5b6270">lg 12</span></div>
+              <div style="width:1px;background:#dde1e7"></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:48px;height:48px;background:#fff;border-radius:8px;box-shadow:0 1px 2px rgba(16,24,40,.06),0 1px 3px rgba(16,24,40,.08)"></div><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5b6270">sm</span></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:48px;height:48px;background:#fff;border-radius:8px;box-shadow:0 4px 12px rgba(16,24,40,.08),0 1px 3px rgba(16,24,40,.06)"></div><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5b6270">md</span></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:48px;height:48px;background:#fff;border-radius:8px;box-shadow:0 20px 48px rgba(16,24,40,.18),0 4px 12px rgba(16,24,40,.08)"></div><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#5b6270">lg</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;width:620px">
+      <div style="font-size:15px;font-weight:600">tokens.css</div>
+      <pre style="margin:0;background:#1a1d23;color:#e8eaee;border-radius:12px;padding:24px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.6;white-space:pre;overflow:auto">{{ tokensCss }}</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============ КОМПОНЕНТЫ ============ -->
+<section data-screen-label="02 Компоненты" style="display:flex;flex-direction:column;gap:32px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font-size:14px;color:#5b6270;font-family:'JetBrains Mono',monospace">02</span><h2 style="margin:0;font-size:32px;font-weight:600">Компоненты</h2></div>
+  <div style="display:flex;gap:40px;align-items:flex-start;flex-wrap:wrap">
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="font-size:15px;font-weight:600">Кнопки</div>
+      <div style="background:#fff;border:1px solid #dde1e7;border-radius:12px;padding:24px;display:grid;grid-template-columns:100px repeat(5,auto);gap:20px 24px;align-items:center">
+        <span></span>
+        <span style="font-size:13px;color:#5b6270">Обычная</span><span style="font-size:13px;color:#5b6270">Hover</span><span style="font-size:13px;color:#5b6270">Focus</span><span style="font-size:13px;color:#5b6270">Disabled</span><span style="font-size:13px;color:#5b6270">Loading</span>
+
+        <span style="font-size:13px;color:#5b6270">Основная</span>
+        <button style="height:40px;padding:0 16px;border:0;border-radius:8px;background:#2f5bd3;color:#fff;font:inherit;font-size:15px;font-weight:500;cursor:pointer" style-hover="background:#2549b0">Добавить</button>
+        <button style="height:40px;padding:0 16px;border:0;border-radius:8px;background:#2549b0;color:#fff;font:inherit;font-size:15px;font-weight:500">Добавить</button>
+        <button style="height:40px;padding:0 16px;border:0;border-radius:8px;background:#2f5bd3;color:#fff;font:inherit;font-size:15px;font-weight:500;box-shadow:0 0 0 2px #fff,0 0 0 4px #2f5bd3">Добавить</button>
+        <button style="height:40px;padding:0 16px;border:0;border-radius:8px;background:#e4e7ec;color:#8a919d;font:inherit;font-size:15px;font-weight:500;cursor:not-allowed">Добавить</button>
+        <button style="height:40px;padding:0 16px;border:0;border-radius:8px;background:#2f5bd3;color:#fff;font:inherit;font-size:15px;font-weight:500;display:inline-flex;align-items:center;gap:8px;opacity:.85"><span style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;box-sizing:border-box"></span>Добавление…</button>
+
+        <span style="font-size:13px;color:#5b6270">Вторичная</span>
+        <button style="height:40px;padding:0 16px;border:1px solid #c4cad3;border-radius:8px;background:#fff;color:#1a1d23;font:inherit;font-size:15px;font-weight:500;cursor:pointer" style-hover="background:#f0f2f5">Отмена</button>
+        <button style="height:40px;padding:0 16px;border:1px solid #c4cad3;border-radius:8px;background:#f0f2f5;color:#1a1d23;font:inherit;font-size:15px;font-weight:500">Отмена</button>
+        <button style="height:40px;padding:0 16px;border:1px solid #c4cad3;border-radius:8px;background:#fff;color:#1a1d23;font:inherit;font-size:15px;font-weight:500;box-shadow:0 0 0 2px #fff,0 0 0 4px #2f5bd3">Отмена</button>
+        <button style="height:40px;padding:0 16px;border:1px solid #e4e7ec;border-radius:8px;background:#f8f9fb;color:#8a919d;font:inherit;font-size:15px;font-weight:500;cursor:not-allowed">Отмена</button>
+        <button style="height:40px;padding:0 16px;border:1px solid #c4cad3;border-radius:8px;background:#fff;color:#1a1d23;font:inherit;font-size:15px;font-weight:500;display:inline-flex;align-items:center;gap:8px;opacity:.85"><span style="width:14px;height:14px;border-radius:50%;border:2px solid #c4cad3;border-top-color:#1a1d23;box-sizing:border-box"></span>Загрузка…</button>
+
+        <span style="font-size:13px;color:#5b6270">Текстовая</span>
+        <button style="height:40px;padding:0 12px;border:0;border-radius:8px;background:transparent;color:#2f5bd3;font:inherit;font-size:15px;font-weight:500;cursor:pointer" style-hover="background:#e8eefc">Сбросить</button>
+        <button style="height:40px;padding:0 12px;border:0;border-radius:8px;background:#e8eefc;color:#2549b0;font:inherit;font-size:15px;font-weight:500">Сбросить</button>
+        <button style="height:40px;padding:0 12px;border:0;border-radius:8px;background:transparent;color:#2f5bd3;font:inherit;font-size:15px;font-weight:500;box-shadow:0 0 0 2px #2f5bd3">Сбросить</button>
+        <button style="height:40px;padding:0 12px;border:0;border-radius:8px;background:transparent;color:#8a919d;font:inherit;font-size:15px;font-weight:500;cursor:not-allowed">Сбросить</button>
+        <button style="height:40px;padding:0 12px;border:0;border-radius:8px;background:transparent;color:#2f5bd3;font:inherit;font-size:15px;font-weight:500;display:inline-flex;align-items:center;gap:8px;opacity:.85"><span style="width:14px;height:14px;border-radius:50%;border:2px solid #b9c9f2;border-top-color:#2f5bd3;box-sizing:border-box"></span>Сброс…</button>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="font-size:15px;font-weight:600">Поля</div>
+      <div style="background:#fff;border:1px solid #dde1e7;border-radius:12px;padding:24px;display:grid;grid-template-columns:repeat(3,260px);gap:24px">
+        <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#5b6270;margin-bottom:6px">Обычное</span><label style="font-size:14px;font-weight:500">Email</label><input placeholder="name@company.ru" style="height:40px;width:100%;box-sizing:border-box;padding:0 12px;border:1px solid #c4cad3;border-radius:8px;background:#fff;font:inherit;font-size:15px;color:#1a1d23;outline:none" style-focus="border-color:#2f5bd3;box-shadow:0 0 0 3px rgba(47,91,211,.25)"></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#5b6270;margin-bottom:6px">Focus</span><label style="font-size:14px;font-weight:500">Email</label><div style="height:40px;box-sizing:border-box;padding:0 12px;border:1px solid #2f5bd3;border-radius:8px;background:#fff;font-size:15px;display:flex;align-items:center;box-shadow:0 0 0 3px rgba(47,91,211,.25)">anna.ivanova@company.ru<span style="width:1px;height:18px;background:#1a1d23;margin-left:1px"></span></div></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#5b6270;margin-bottom:6px">Ошибка</span><label style="font-size:14px;font-weight:500">Email</label><div style="height:40px;box-sizing:border-box;padding:0 12px;border:1px solid #c2362f;border-radius:8px;background:#fff;font-size:15px;display:flex;align-items:center">anna@</div><span style="font-size:13px;color:#c2362f">Введите корректный email</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:14px;font-weight:500">Отдел <span style="color:#c2362f">*</span></label><div style="height:40px;box-sizing:border-box;padding:0 12px;border:1px solid #c4cad3;border-radius:8px;background:#fff;font-size:15px;color:#5b6270;display:flex;align-items:center;justify-content:space-between">Выберите отдел<svg width="12" height="12" viewBox="0 0 12 12"><path d="M3 4.5l3 3 3-3" style="fill:none;stroke:#5b6270;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"></path></svg></div></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:14px;font-weight:500">Отдел <span style="color:#c2362f">*</span></label><div style="height:40px;box-sizing:border-box;padding:0 12px;border:1px solid #2f5bd3;border-radius:8px;background:#fff;font-size:15px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 0 0 3px rgba(47,91,211,.25)">Разработка<svg width="12" height="12" viewBox="0 0 12 12"><path d="M3 4.5l3 3 3-3" style="fill:none;stroke:#1a1d23;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"></path></svg></div></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:14px;font-weight:500">Отдел <span style="color:#c2362f">*</span></label><div style="height:40px;box-sizing:border-box;padding:0 12px;border:1px solid #c2362f;border-radius:8px;background:#fff;font-size:15px;color:#5b6270;display:flex;align-items:center;justify-content:space-between">Выберите отдел<svg width="12" height="12" viewBox="0 0 12 12"><path d="M3 4.5l3 3 3-3" style="fill:none;stroke:#5b6270;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"></path></svg></div><span style="font-size:13px;color:#c2362f">Выберите отдел</span></div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="font-size:15px;font-weight:600">Строка таблицы</div>
+      <div style="width:760px;background:#fff;border:1px solid #dde1e7;border-radius:12px;overflow:hidden">
+        <div style="display:grid;grid-template-columns:110px minmax(0,2fr) minmax(0,1.5fr) minmax(0,1fr);align-items:center;gap:16px;padding:0 20px;height:52px">
+          <span style="font-size:12px;color:#5b6270;font-family:'JetBrains Mono',monospace">обычная</span><span style="font-size:15px;font-weight:500">Иванова Анна Сергеевна</span><span style="font-size:14px;color:#5b6270">Руководитель отдела</span><span><span style="display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:6px;font-size:13px;font-weight:500;background:#e6edfb;color:#2a4a9a">Разработка</span></span>
+        </div>
+        <div style="display:grid;grid-template-columns:110px minmax(0,2fr) minmax(0,1.5fr) minmax(0,1fr);align-items:center;gap:16px;padding:0 20px;height:52px;border-top:1px solid #e8ebef;background:#f8f9fb">
+          <span style="font-size:12px;color:#5b6270;font-family:'JetBrains Mono',monospace">hover</span><span style="font-size:15px;font-weight:500">Смирнова Ольга Викторовна</span><span style="font-size:14px;color:#5b6270">HR-менеджер</span><span><span style="display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:6px;font-size:13px;font-weight:500;background:#f7e7f0;color:#8a2f5e">HR</span></span>
+        </div>
+        <div style="display:grid;grid-template-columns:110px minmax(0,2fr) minmax(0,1.5fr) minmax(0,1fr);align-items:center;gap:16px;padding:0 20px;height:52px;border-top:1px solid #e8ebef;background:#eaf6ef;box-shadow:inset 3px 0 0 #1f7a4d">
+          <span style="font-size:12px;color:#1f7a4d;font-family:'JetBrains Mono',monospace">новая (2 с)</span><span style="font-size:15px;font-weight:500">Соколов Игорь Павлович</span><span style="font-size:14px;color:#5b6270">Дизайнер</span><span><span style="display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:6px;font-size:13px;font-weight:500;background:#eee8f8;color:#5b3b94">Маркетинг</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="font-size:15px;font-weight:600">Карточка (мобильная)</div>
+      <div style="width:328px;box-sizing:border-box;background:#fff;border:1px solid #dde1e7;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:600">Петров Дмитрий Олегович</span><span style="font-size:14px;color:#5b6270">Frontend-разработчик</span></div>
+        <span style="align-self:flex-start;display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:6px;font-size:13px;font-weight:500;background:#e6edfb;color:#2a4a9a">Разработка</span>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="font-size:15px;font-weight:600">Уведомление</div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="width:320px;box-sizing:border-box;display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #dde1e7;border-radius:12px;padding:14px 16px;box-shadow:0 4px 12px rgba(16,24,40,.08),0 1px 3px rgba(16,24,40,.06)">
+          <span style="flex:none;width:24px;height:24px;border-radius:50%;background:#1f7a4d;color:#fff;display:grid;place-items:center;font-size:14px;font-weight:600">✓</span>
+          <span style="flex:1;font-size:15px;font-weight:500">Сотрудник добавлен</span>
+          <button aria-label="Закрыть" style="width:28px;height:28px;border:0;border-radius:6px;background:transparent;color:#5b6270;font-size:18px;line-height:1;cursor:pointer" style-hover="background:#f0f2f5">×</button>
+        </div>
+        <div style="width:320px;box-sizing:border-box;display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #dde1e7;border-radius:12px;padding:14px 16px;box-shadow:0 4px 12px rgba(16,24,40,.08),0 1px 3px rgba(16,24,40,.06)">
+          <span style="flex:none;width:24px;height:24px;border-radius:50%;background:#c2362f;color:#fff;display:grid;place-items:center;font-size:14px;font-weight:600">!</span>
+          <span style="flex:1;font-size:15px;font-weight:500">Не удалось сохранить</span>
+          <button aria-label="Закрыть" style="width:28px;height:28px;border:0;border-radius:6px;background:transparent;color:#5b6270;font-size:18px;line-height:1;cursor:pointer" style-hover="background:#f0f2f5">×</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="font-size:15px;font-weight:600">Сообщение об ошибке (над формой)</div>
+      <div style="width:336px;box-sizing:border-box;display:flex;gap:10px;align-items:flex-start;background:#fdecea;border:1px solid #f3c5c1;border-radius:8px;padding:10px 12px;color:#9b2a24;font-size:14px;line-height:1.4">
+        <span style="flex:none;width:18px;height:18px;margin-top:1px;border-radius:50%;background:#c2362f;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:600">!</span>Неверный email или пароль
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ВХОД ============ -->
+<section data-screen-label="03 Вход" style="display:flex;flex-direction:column;gap:32px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font-size:14px;color:#5b6270;font-family:'JetBrains Mono',monospace">03</span><h2 style="margin:0;font-size:32px;font-weight:600">Вход</h2></div>
+  <div style="display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start">
+    <sc-for list="{{ loginStates }}" as="s" hint-placeholder-count="4">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="font-size:14px;color:#5b6270">{{ s.label }}</div>
+        <div style="width:480px;height:680px;background:#f6f7f9;border:1px solid #dde1e7;border-radius:12px;display:flex;align-items:center;justify-content:center">
+          <div style="width:400px;box-sizing:border-box;background:#fff;border:1px solid #dde1e7;border-radius:12px;padding:32px;box-shadow:0 1px 2px rgba(16,24,40,.05),0 8px 24px rgba(16,24,40,.06);display:flex;flex-direction:column;gap:24px">
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <div style="width:36px;height:36px;border-radius:10px;background:#2f5bd3;color:#fff;display:grid;place-items:center;font-size:16px;font-weight:600">С</div>
+              <div style="display:flex;flex-direction:column;gap:4px"><h3 style="margin:0;font-size:24px;font-weight:600">Вход</h3><p style="margin:0;font-size:14px;color:#5b6270">Справочник сотрудников компании</p></div>
+            </div>
+            <sc-if value="{{ s.alert }}" hint-placeholder-val="{{ false }}">
+              <div role="alert" style="display:flex;gap:10px;align-items:flex-start;background:#fdecea;border:1px solid #f3c5c1;border-radius:8px;padding:10px 12px;color:#9b2a24;font-size:14px;line-height:1.4"><span style="flex:none;width:18px;height:18px;margin-top:1px;border-radius:50%;background:#c2362f;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:600">!</span>Неверный email или пароль</div>
+            </sc-if>
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <label style="font-size:14px;font-weight:500">Email</label>
+                <div style="height:40px;box-sizing:border-box;padding:0 12px;border:1px solid {{ s.emailBorder }};border-radius:8px;background:{{ s.fieldBg }};font-size:15px;color:{{ s.emailColor }};display:flex;align-items:center;box-shadow:{{ s.emailShadow }}">{{ s.email }}</div>
+                <sc-if value="{{ s.emailErr }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#c2362f">{{ s.emailErr }}</span></sc-if>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <label style="font-size:14px;font-weight:500">Пароль</label>
+                <div style="height:40px;box-sizing:border-box;padding:0 12px;border:1px solid {{ s.passBorder }};border-radius:8px;background:{{ s.fieldBg }};font-size:15px;color:{{ s.passColor }};display:flex;align-items:center;letter-spacing:{{ s.passSpacing }}">{{ s.pass }}</div>
+                <sc-if value="{{ s.passErr }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#c2362f">{{ s.passErr }}</span></sc-if>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <button style="height:44px;width:100%;border:0;border-radius:8px;background:#2f5bd3;color:#fff;font:inherit;font-size:15px;font-weight:500;display:flex;align-items:center;justify-content:center;gap:8px;opacity:{{ s.btnOpacity }};cursor:pointer" style-hover="background:#2549b0"><sc-if value="{{ s.loading }}" hint-placeholder-val="{{ false }}"><span style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;box-sizing:border-box"></span></sc-if>{{ s.btn }}</button>
+              <div style="font-size:14px;color:#5b6270;text-align:center">Нет аккаунта? <a href="#">Зарегистрироваться</a></div>
+            </div>
+            <div style="background:#f6f7f9;border:1px dashed #c4cad3;border-radius:8px;padding:10px 12px;font-size:13px;line-height:1.5;color:#5b6270">Демо-доступ: <span style="color:#1a1d23;font-family:'JetBrains Mono',monospace;font-size:12.5px">demo@company.ru</span> / <span style="color:#1a1d23;font-family:'JetBrains Mono',monospace;font-size:12.5px">demo12345</span></div>
+          </div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</section>
+
+<!-- ============ РЕГИСТРАЦИЯ ============ -->
+<section data-screen-label="04 Регистрация" style="display:flex;flex-direction:column;gap:32px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font-size:14px;color:#5b6270;font-family:'JetBrains Mono',monospace">04</span><h2 style="margin:0;font-size:32px;font-weight:600">Регистрация</h2></div>
+  <div style="display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start">
+    <sc-for list="{{ regStates }}" as="s" hint-placeholder-count="4">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="font-size:14px;color:#5b6270">{{ s.label }}</div>
+        <div style="width:480px;height:680px;background:#f6f7f9;border:1px solid #dde1e7;border-radius:12px;display:flex;align-items:center;justify-content:center">
+          <div style="width:400px;box-sizing:border-box;background:#fff;border:1px solid #dde1e7;border-radius:12px;padding:32px;box-shadow:0 1px 2px rgba(16,24,40,.05),0 8px 24px rgba(16,24,40,.06);display:flex;flex-direction:column;gap:24px">
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <div style="width:36px;height:36px;border-radius:10px;background:#2f5bd3;color:#fff;display:grid;place-items:center;font-size:16px;font-weight:600">С</div>
+              <div style="display:flex;flex-direction:column;gap:4px"><h3 style="margin:0;font-size:24px;font-weight:600">Регистрация</h3><p style="margin:0;font-size:14px;color:#5b6270">Создайте аккаунт для доступа к справочнику</p></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <label style="font-size:14px;font-weight:500">Email</label>
+                <div style="height:40px;box-sizing:border-box;padding:0 12px;border:1px solid {{ s.emailBorder }};border-radius:8px;background:{{ s.fieldBg }};font-size:15px;color:{{ s.emailColor }};display:flex;align-items:center">{{ s.email }}</div>
+                <sc-if value="{{ s.emailErr }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#c2362f">{{ s.emailErr }}</span></sc-if>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <label style="font-size:14px;font-weight:500">Пароль</label>
+                <div style="height:40px;box-sizing:border-box;padding:0 12px;border:1px solid {{ s.passBorder }};border-radius:8px;background:{{ s.fieldBg }};font-size:15px;color:{{ s.passColor }};display:flex;align-items:center;letter-spacing:{{ s.passSpacing }}">{{ s.pass }}</div>
+                <span style="font-size:13px;color:{{ s.hintColor }}">Не меньше 8 символов</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <label style="font-size:14px;font-weight:500">Повторите пароль</label>
+                <div style="height:40px;box-sizing:border-box;padding:0 12px;border:1px solid {{ s.pass2Border }};border-radius:8px;background:{{ s.fieldBg }};font-size:15px;color:{{ s.passColor }};display:flex;align-items:center;letter-spacing:{{ s.passSpacing }}">{{ s.pass2 }}</div>
+                <sc-if value="{{ s.pass2Err }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#c2362f">{{ s.pass2Err }}</span></sc-if>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <button style="height:44px;width:100%;border:0;border-radius:8px;background:#2f5bd3;color:#fff;font:inherit;font-size:15px;font-weight:500;display:flex;align-items:center;justify-content:center;gap:8px;opacity:{{ s.btnOpacity }};cursor:pointer" style-hover="background:#2549b0"><sc-if value="{{ s.loading }}" hint-placeholder-val="{{ false }}"><span style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;box-sizing:border-box"></span></sc-if>{{ s.btn }}</button>
+              <div style="font-size:14px;color:#5b6270;text-align:center">Уже есть аккаунт? <a href="#">Войти</a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</section>
+
+<!-- ============ СПИСОК 1200 ============ -->
+<section data-screen-label="05 Список сотрудников" style="display:flex;flex-direction:column;gap:32px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font-size:14px;color:#5b6270;font-family:'JetBrains Mono',monospace">05</span><h2 style="margin:0;font-size:32px;font-weight:600">Список сотрудников · 1200</h2></div>
+  <div style="display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start">
+    <sc-for list="{{ listStates }}" as="st" hint-placeholder-count="5">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="font-size:14px;color:#5b6270">{{ st.label }}</div>
+        <div style="width:1200px;height:680px;background:#f6f7f9;border:1px solid #dde1e7;border-radius:12px;overflow:hidden">
+          <div style="height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:#fff;border-bottom:1px solid #dde1e7">
+            <div style="display:flex;align-items:center;gap:10px"><div style="width:28px;height:28px;border-radius:8px;background:#2f5bd3;color:#fff;display:grid;place-items:center;font-size:13px;font-weight:600">С</div><span style="font-size:16px;font-weight:600">Справочник сотрудников</span></div>
+            <div style="display:flex;align-items:center;gap:16px"><span style="font-size:14px;color:#5b6270">demo@company.ru</span><button style="height:32px;padding:0 12px;border-radius:8px;border:1px solid #c4cad3;background:#fff;font:inherit;font-size:14px;font-weight:500;color:#1a1d23;cursor:pointer" style-hover="background:#f0f2f5">Выйти</button></div>
+          </div>
+          <div style="max-width:1040px;margin:0 auto;padding:32px 24px;display:flex;flex-direction:column;gap:20px">
+            <h3 style="margin:0;font-size:28px;font-weight:600;letter-spacing:-0.01em">Сотрудники</h3>
+            <div style="display:flex;gap:12px;align-items:center">
+              <div style="position:relative;flex:1;max-width:360px">
+                <svg width="16" height="16" viewBox="0 0 16 16" style="position:absolute;left:12px;top:12px"><circle cx="7" cy="7" r="5" style="fill:none;stroke:#5b6270;stroke-width:1.6"></circle><path d="M11 11l3.5 3.5" style="fill:none;stroke:#5b6270;stroke-width:1.6;stroke-linecap:round"></path></svg>
+                <div style="height:40px;box-sizing:border-box;padding:0 12px 0 38px;border:1px solid #c4cad3;border-radius:8px;background:#fff;font-size:15px;color:{{ st.searchColor }};display:flex;align-items:center">{{ st.search }}</div>
+              </div>
+              <div style="width:200px;height:40px;box-sizing:border-box;padding:0 12px;border:1px solid #c4cad3;border-radius:8px;background:#fff;font-size:15px;display:flex;align-items:center;justify-content:space-between">{{ st.dept }}<svg width="12" height="12" viewBox="0 0 12 12"><path d="M3 4.5l3 3 3-3" style="fill:none;stroke:#5b6270;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"></path></svg></div>
+              <div style="flex:1"></div>
+              <button style="height:40px;padding:0 16px;border:0;border-radius:8px;background:#2f5bd3;color:#fff;font:inherit;font-size:15px;font-weight:500;display:inline-flex;align-items:center;gap:8px;cursor:pointer" style-hover="background:#2549b0"><span style="font-size:18px;line-height:1">+</span>Добавить сотрудника</button>
+            </div>
+            <sc-if value="{{ st.isLoading }}" hint-placeholder-val="{{ false }}">
+              <div style="height:20px;display:flex;align-items:center"><div style="width:90px;height:12px;border-radius:4px;background:#e4e7ec"></div></div>
+            </sc-if>
+            <sc-if value="{{ st.count }}" hint-placeholder-val="{{ true }}">
+              <div style="font-size:14px;color:#5b6270;height:20px">{{ st.count }}</div>
+            </sc-if>
+            <div style="background:#fff;border:1px solid #dde1e7;border-radius:12px;overflow:hidden">
+              <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.5fr) minmax(0,1fr);gap:16px;padding:0 20px;height:40px;align-items:center;background:#f8f9fb;font-size:13px;font-weight:500;color:#5b6270"><span>ФИО</span><span>Должность</span><span>Отдел</span></div>
+              <sc-if value="{{ st.rows }}" hint-placeholder-val="{{ true }}">
+                <sc-for list="{{ st.rows }}" as="e" hint-placeholder-count="5">
+                  <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.5fr) minmax(0,1fr);align-items:center;gap:16px;padding:0 20px;height:52px;border-top:1px solid #e8ebef" style-hover="background:#f8f9fb">
+                    <span style="font-size:15px;font-weight:500">{{ e.name }}</span><span style="font-size:14px;color:#5b6270">{{ e.role }}</span><span><span style="display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:6px;font-size:13px;font-weight:500;background:{{ e.bg }};color:{{ e.fg }}">{{ e.dept }}</span></span>
+                  </div>
+                </sc-for>
+              </sc-if>
+              <sc-if value="{{ st.isLoading }}" hint-placeholder-val="{{ false }}">
+                <sc-for list="{{ skeleton }}" as="k" hint-placeholder-count="5">
+                  <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.5fr) minmax(0,1fr);align-items:center;gap:16px;padding:0 20px;height:52px;border-top:1px solid #e8ebef">
+                    <div style="height:12px;border-radius:4px;background:#e4e7ec;width:{{ k.a }}"></div><div style="height:12px;border-radius:4px;background:#eceff3;width:{{ k.b }}"></div><div style="height:20px;border-radius:6px;background:#eceff3;width:{{ k.c }}"></div>
+                  </div>
+                </sc-for>
+              </sc-if>
+              <sc-if value="{{ st.empty }}" hint-placeholder-val="{{ false }}">
+                <div style="border-top:1px solid #e8ebef;padding:64px 24px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center">
+                  <div style="width:40px;height:40px;border-radius:50%;background:{{ st.empty.iconBg }};color:{{ st.empty.iconFg }};display:grid;place-items:center;font-size:18px;font-weight:600;margin-bottom:8px">{{ st.empty.icon }}</div>
+                  <div style="font-size:17px;font-weight:600">{{ st.empty.title }}</div>
+                  <div style="font-size:14px;color:#5b6270;max-width:360px;line-height:1.5">{{ st.empty.text }}</div>
+                  <div style="margin-top:12px">
+                    <sc-if value="{{ st.empty.primary }}" hint-placeholder-val="{{ false }}"><button style="height:40px;padding:0 16px;border:0;border-radius:8px;background:#2f5bd3;color:#fff;font:inherit;font-size:15px;font-weight:500;display:inline-flex;align-items:center;gap:8px;cursor:pointer" style-hover="background:#2549b0"><span style="font-size:18px;line-height:1">+</span>{{ st.empty.action }}</button></sc-if>
+                    <sc-if value="{{ st.empty.secondary }}" hint-placeholder-val="{{ false }}"><button style="height:40px;padding:0 16px;border:1px solid #c4cad3;border-radius:8px;background:#fff;color:#1a1d23;font:inherit;font-size:15px;font-weight:500;cursor:pointer" style-hover="background:#f0f2f5">{{ st.empty.action }}</button></sc-if>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</section>
+
+<!-- ============ АДАПТИВ ============ -->
+<section data-screen-label="06 Адаптив" style="display:flex;flex-direction:column;gap:32px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font-size:14px;color:#5b6270;font-family:'JetBrains Mono',monospace">06</span><h2 style="margin:0;font-size:32px;font-weight:600">Список · 768 и 360</h2></div>
+  <div style="display:flex;gap:40px;align-items:flex-start">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="font-size:14px;color:#5b6270">768 px — таблица, фильтры в строку</div>
+      <div style="width:768px;background:#f6f7f9;border:1px solid #dde1e7;border-radius:12px;overflow:hidden">
+        <div style="height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:#fff;border-bottom:1px solid #dde1e7">
+          <div style="display:flex;align-items:center;gap:10px"><div style="width:28px;height:28px;border-radius:8px;background:#2f5bd3;color:#fff;display:grid;place-items:center;font-size:13px;font-weight:600">С</div><span style="font-size:16px;font-weight:600">Справочник сотрудников</span></div>
+          <div style="display:flex;align-items:center;gap:12px"><span style="font-size:14px;color:#5b6270">demo@company.ru</span><button style="height:32px;padding:0 12px;border-radius:8px;border:1px solid #c4cad3;background:#fff;font:inherit;font-size:14px;font-weight:500;color:#1a1d23">Выйти</button></div>
+        </div>
+        <div style="padding:24px 20px;display:flex;flex-direction:column;gap:16px">
+          <h3 style="margin:0;font-size:24px;font-weight:600">Сотрудники</h3>
+          <div style="display:flex;gap:12px;align-items:center">
+            <div style="position:relative;flex:1;min-width:0">
+              <svg width="16" height="16" viewBox="0 0 16 16" style="position:absolute;left:12px;top:12px"><circle cx="7" cy="7" r="5" style="fill:none;stroke:#5b6270;stroke-width:1.6"></circle><path d="M11 11l3.5 3.5" style="fill:none;stroke:#5b6270;stroke-width:1.6;stroke-linecap:round"></path></svg>
+              <div style="height:40px;box-sizing:border-box;padding:0 12px 0 38px;border:1px solid #c4cad3;border-radius:8px;background:#fff;font-size:15px;color:#5b6270;display:flex;align-items:center">Поиск по ФИО</div>
+            </div>
+            <div style="width:170px;height:40px;box-sizing:border-box;padding:0 12px;border:1px solid #c4cad3;border-radius:8px;background:#fff;font-size:15px;display:flex;align-items:center;justify-content:space-between">Все отделы<svg width="12" height="12" viewBox="0 0 12 12"><path d="M3 4.5l3 3 3-3" style="fill:none;stroke:#5b6270;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"></path></svg></div>
+            <button style="height:40px;padding:0 16px;border:0;border-radius:8px;background:#2f5bd3;color:#fff;font:inherit;font-size:15px;font-weight:500;display:inline-flex;align-items:center;gap:8px;white-space:nowrap"><span style="font-size:18px;line-height:1">+</span>Добавить сотрудника</button>
+          </div>
+          <div style="font-size:14px;color:#5b6270">Найдено: 5</div>
+          <div style="background:#fff;border:1px solid #dde1e7;border-radius:12px;overflow:hidden">
+            <div style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1fr);gap:12px;padding:0 16px;height:40px;align-items:center;background:#f8f9fb;font-size:13px;font-weight:500;color:#5b6270"><span>ФИО</span><span>Должность</span><span>Отдел</span></div>
+            <sc-for list="{{ employees }}" as="e" hint-placeholder-count="5">
+              <div style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1.3fr) minmax(0,1fr);align-items:center;gap:12px;padding:12px 16px;min-height:52px;box-sizing:border-box;border-top:1px solid #e8ebef">
+                <span style="font-size:15px;font-weight:500">{{ e.name }}</span><span style="font-size:14px;color:#5b6270">{{ e.role }}</span><span><span style="display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:6px;font-size:13px;font-weight:500;background:{{ e.bg }};color:{{ e.fg }}">{{ e.dept }}</span></span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="font-size:14px;color:#5b6270">360 px — карточки, фильтры в столбик</div>
+      <div style="width:360px;background:#f6f7f9;border:1px solid #dde1e7;border-radius:12px;overflow:hidden">
+        <div style="height:56px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 16px;background:#fff;border-bottom:1px solid #dde1e7">
+          <div style="display:flex;align-items:center;gap:8px;min-width:0"><div style="flex:none;width:28px;height:28px;border-radius:8px;background:#2f5bd3;color:#fff;display:grid;place-items:center;font-size:13px;font-weight:600">С</div><span style="font-size:15px;font-weight:600">Справочник</span></div>
+          <div style="display:flex;align-items:center;gap:8px;min-width:0"><span style="font-size:13px;color:#5b6270;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:110px">demo@company.ru</span><button style="flex:none;height:44px;padding:0 10px;border:0;border-radius:8px;background:transparent;font:inherit;font-size:14px;font-weight:500;color:#2f5bd3">Выйти</button></div>
+        </div>
+        <div style="padding:20px 16px;display:flex;flex-direction:column;gap:12px">
+          <h3 style="margin:0 0 4px;font-size:22px;font-weight:600">Сотрудники</h3>
+          <div style="position:relative">
+            <svg width="16" height="16" viewBox="0 0 16 16" style="position:absolute;left:12px;top:14px"><circle cx="7" cy="7" r="5" style="fill:none;stroke:#5b6270;stroke-width:1.6"></circle><path d="M11 11l3.5 3.5" style="fill:none;stroke:#5b6270;stroke-width:1.6;stroke-linecap:round"></path></svg>
+            <div style="height:44px;box-sizing:border-box;padding:0 12px 0 38px;border:1px solid #c4cad3;border-radius:8px;background:#fff;font-size:15px;color:#5b6270;display:flex;align-items:center">Поиск по ФИО</div>
+          </div>
+          <div style="height:44px;box-sizing:border-box;padding:0 12px;border:1px solid #c4cad3;border-radius:8px;background:#fff;font-size:15px;display:flex;align-items:center;justify-content:space-between">Все отделы<svg width="12" height="12" viewBox="0 0 12 12"><path d="M3 4.5l3 3 3-3" style="fill:none;stroke:#5b6270;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"></path></svg></div>
+          <button style="height:44px;width:100%;border:0;border-radius:8px;background:#2f5bd3;color:#fff;font:inherit;font-size:15px;font-weight:500;display:flex;align-items:center;justify-content:center;gap:8px"><span style="font-size:18px;line-height:1">+</span>Добавить сотрудника</button>
+          <div style="font-size:14px;color:#5b6270;margin-top:4px">Найдено: 5</div>
+          <sc-for list="{{ employees }}" as="e" hint-placeholder-count="5">
+            <div style="background:#fff;border:1px solid #dde1e7;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:600">{{ e.name }}</span><span style="font-size:14px;color:#5b6270">{{ e.role }}</span></div>
+              <span style="align-self:flex-start;display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:6px;font-size:13px;font-weight:500;background:{{ e.bg }};color:{{ e.fg }}">{{ e.dept }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ДОБАВЛЕНИЕ ============ -->
+<section data-screen-label="07 Добавление сотрудника" style="display:flex;flex-direction:column;gap:32px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font-size:14px;color:#5b6270;font-family:'JetBrains Mono',monospace">07</span><h2 style="margin:0;font-size:32px;font-weight:600">Добавление сотрудника</h2></div>
+  <div style="display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start">
+    <sc-for list="{{ modalStates }}" as="m" hint-placeholder-count="2">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="font-size:14px;color:#5b6270">{{ m.label }}</div>
+        <div style="position:relative;width:1200px;height:680px;background:#f6f7f9;border:1px solid #dde1e7;border-radius:12px;overflow:hidden">
+          <div style="height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:#fff;border-bottom:1px solid #dde1e7">
+            <div style="display:flex;align-items:center;gap:10px"><div style="width:28px;height:28px;border-radius:8px;background:#2f5bd3;color:#fff;display:grid;place-items:center;font-size:13px;font-weight:600">С</div><span style="font-size:16px;font-weight:600">Справочник сотрудников</span></div>
+            <div style="display:flex;align-items:center;gap:16px"><span style="font-size:14px;color:#5b6270">demo@company.ru</span><button style="height:32px;padding:0 12px;border-radius:8px;border:1px solid #c4cad3;background:#fff;font:inherit;font-size:14px;font-weight:500;color:#1a1d23">Выйти</button></div>
+          </div>
+          <div style="max-width:1040px;margin:0 auto;padding:32px 24px;display:flex;flex-direction:column;gap:20px">
+            <h3 style="margin:0;font-size:28px;font-weight:600;letter-spacing:-0.01em">Сотрудники</h3>
+            <div style="display:flex;gap:12px;align-items:center">
+              <div style="position:relative;flex:1;max-width:360px">
+                <svg width="16" height="16" viewBox="0 0 16 16" style="position:absolute;left:12px;top:12px"><circle cx="7" cy="7" r="5" style="fill:none;stroke:#5b6270;stroke-width:1.6"></circle><path d="M11 11l3.5 3.5" style="fill:none;stroke:#5b6270;stroke-width:1.6;stroke-linecap:round"></path></svg>
+                <div style="height:40px;box-sizing:border-box;padding:0 12px 0 38px;border:1px solid #c4cad3;border-radius:8px;background:#fff;font-size:15px;color:#5b6270;display:flex;align-items:center">Поиск по ФИО</div>
+              </div>
+              <div style="width:200px;height:40px;box-sizing:border-box;padding:0 12px;border:1px solid #c4cad3;border-radius:8px;background:#fff;font-size:15px;display:flex;align-items:center;justify-content:space-between">Все отделы<svg width="12" height="12" viewBox="0 0 12 12"><path d="M3 4.5l3 3 3-3" style="fill:none;stroke:#5b6270;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"></path></svg></div>
+              <div style="flex:1"></div>
+              <button style="height:40px;padding:0 16px;border:0;border-radius:8px;background:#2f5bd3;color:#fff;font:inherit;font-size:15px;font-weight:500;display:inline-flex;align-items:center;gap:8px"><span style="font-size:18px;line-height:1">+</span>Добавить сотрудника</button>
+            </div>
+            <div style="font-size:14px;color:#5b6270">{{ m.count }}</div>
+            <div style="background:#fff;border:1px solid #dde1e7;border-radius:12px;overflow:hidden">
+              <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.5fr) minmax(0,1fr);gap:16px;padding:0 20px;height:40px;align-items:center;background:#f8f9fb;font-size:13px;font-weight:500;color:#5b6270"><span>ФИО</span><span>Должность</span><span>Отдел</span></div>
+              <sc-for list="{{ m.rows }}" as="e" hint-placeholder-count="5">
+                <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.5fr) minmax(0,1fr);align-items:center;gap:16px;padding:0 20px;height:52px;border-top:1px solid #e8ebef;background:{{ e.rowBg }};box-shadow:{{ e.rowShadow }}">
+                  <span style="font-size:15px;font-weight:500">{{ e.name }}</span><span style="font-size:14px;color:#5b6270">{{ e.role }}</span><span><span style="display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:6px;font-size:13px;font-weight:500;background:{{ e.bg }};color:{{ e.fg }}">{{ e.dept }}</span></span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <sc-if value="{{ m.dialog }}" hint-placeholder-val="{{ true }}">
+            <div style="position:absolute;inset:0;background:rgba(16,24,40,.45);display:flex;align-items:center;justify-content:center">
+              <div role="dialog" style="width:480px;box-sizing:border-box;background:#fff;border-radius:12px;box-shadow:0 20px 48px rgba(16,24,40,.18),0 4px 12px rgba(16,24,40,.08);display:flex;flex-direction:column">
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px 4px">
+                  <h4 style="margin:0;font-size:20px;font-weight:600">Новый сотрудник</h4>
+                  <button aria-label="Закрыть" style="width:32px;height:32px;border:0;border-radius:8px;background:transparent;color:#5b6270;font-size:22px;line-height:1;cursor:pointer" style-hover="background:#f0f2f5">×</button>
+                </div>
+                <div style="padding:16px 24px 24px;display:flex;flex-direction:column;gap:16px">
+                  <div style="display:flex;flex-direction:column;gap:6px">
+                    <label style="font-size:14px;font-weight:500">ФИО <span style="color:#c2362f">*</span></label>
+                    <div style="height:40px;box-sizing:border-box;padding:0 12px;border:1px solid #c2362f;border-radius:8px;background:#fff;box-shadow:0 0 0 3px rgba(194,54,47,.18)"></div>
+                    <span style="font-size:13px;color:#c2362f">Укажите ФИО</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:6px">
+                    <label style="font-size:14px;font-weight:500">Должность <span style="color:#c2362f">*</span></label>
+                    <div style="height:40px;box-sizing:border-box;padding:0 12px;border:1px solid #c2362f;border-radius:8px;background:#fff"></div>
+                    <span style="font-size:13px;color:#c2362f">Укажите должность</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:6px">
+                    <label style="font-size:14px;font-weight:500">Отдел <span style="color:#c2362f">*</span></label>
+                    <div style="height:40px;box-sizing:border-box;padding:0 12px;border:1px solid #c2362f;border-radius:8px;background:#fff;font-size:15px;color:#5b6270;display:flex;align-items:center;justify-content:space-between">Выберите отдел<svg width="12" height="12" viewBox="0 0 12 12"><path d="M3 4.5l3 3 3-3" style="fill:none;stroke:#5b6270;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"></path></svg></div>
+                    <span style="font-size:13px;color:#c2362f">Выберите отдел</span>
+                  </div>
+                  <div style="font-size:13px;color:#5b6270"><span style="color:#c2362f">*</span> — обязательные поля</div>
+                </div>
+                <div style="display:flex;justify-content:flex-end;gap:12px;padding:16px 24px;border-top:1px solid #e8ebef">
+                  <button style="height:40px;padding:0 16px;border:1px solid #c4cad3;border-radius:8px;background:#fff;color:#1a1d23;font:inherit;font-size:15px;font-weight:500;cursor:pointer" style-hover="background:#f0f2f5">Отмена</button>
+                  <button style="height:40px;padding:0 16px;border:0;border-radius:8px;background:#2f5bd3;color:#fff;font:inherit;font-size:15px;font-weight:500;cursor:pointer" style-hover="background:#2549b0">Добавить</button>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ m.toast }}" hint-placeholder-val="{{ false }}">
+            <div role="status" style="position:absolute;right:24px;bottom:24px;width:320px;box-sizing:border-box;display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #dde1e7;border-radius:12px;padding:14px 16px;box-shadow:0 4px 12px rgba(16,24,40,.08),0 1px 3px rgba(16,24,40,.06)">
+              <span style="flex:none;width:24px;height:24px;border-radius:50%;background:#1f7a4d;color:#fff;display:grid;place-items:center;font-size:14px;font-weight:600">✓</span>
+              <span style="flex:1;font-size:15px;font-weight:500">Сотрудник добавлен</span>
+              <button aria-label="Закрыть" style="width:28px;height:28px;border:0;border-radius:6px;background:transparent;color:#5b6270;font-size:18px;line-height:1">×</button>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</section>
+
+<!-- ============ ТЁМНАЯ ТЕМА ============ -->
+<section data-screen-label="08 Тёмная тема" style="display:flex;flex-direction:column;gap:32px">
+  <div style="display:flex;align-items:baseline;gap:16px"><span style="font-size:14px;color:#5b6270;font-family:'JetBrains Mono',monospace">08</span><h2 style="margin:0;font-size:32px;font-weight:600">Тёмная тема · prefers-color-scheme</h2></div>
+  <div style="display:flex;gap:40px;align-items:flex-start">
+    <div style="width:1200px;height:680px;background:#121418;border:1px solid #2e333c;border-radius:12px;overflow:hidden;color:#e8eaee">
+      <div style="height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:#1a1d23;border-bottom:1px solid #2e333c">
+        <div style="display:flex;align-items:center;gap:10px"><div style="width:28px;height:28px;border-radius:8px;background:#7c9cf0;color:#121418;display:grid;place-items:center;font-size:13px;font-weight:600">С</div><span style="font-size:16px;font-weight:600">Справочник сотрудников</span></div>
+        <div style="display:flex;align-items:center;gap:16px"><span style="font-size:14px;color:#a2a9b5">demo@company.ru</span><button style="height:32px;padding:0 12px;border-radius:8px;border:1px solid #3a404a;background:#1a1d23;font:inherit;font-size:14px;font-weight:500;color:#e8eaee">Выйти</button></div>
+      </div>
+      <div style="max-width:1040px;margin:0 auto;padding:32px 24px;display:flex;flex-direction:column;gap:20px">
+        <h3 style="margin:0;font-size:28px;font-weight:600;letter-spacing:-0.01em">Сотрудники</h3>
+        <div style="display:flex;gap:12px;align-items:center">
+          <div style="position:relative;flex:1;max-width:360px">
+            <svg width="16" height="16" viewBox="0 0 16 16" style="position:absolute;left:12px;top:12px"><circle cx="7" cy="7" r="5" style="fill:none;stroke:#a2a9b5;stroke-width:1.6"></circle><path d="M11 11l3.5 3.5" style="fill:none;stroke:#a2a9b5;stroke-width:1.6;stroke-linecap:round"></path></svg>
+            <div style="height:40px;box-sizing:border-box;padding:0 12px 0 38px;border:1px solid #7c9cf0;border-radius:8px;background:#1a1d23;font-size:15px;color:#a2a9b5;display:flex;align-items:center;box-shadow:0 0 0 3px rgba(124,156,240,.3)">Поиск по ФИО</div>
+          </div>
+          <div style="width:200px;height:40px;box-sizing:border-box;padding:0 12px;border:1px solid #3a404a;border-radius:8px;background:#1a1d23;font-size:15px;display:flex;align-items:center;justify-content:space-between">Все отделы<svg width="12" height="12" viewBox="0 0 12 12"><path d="M3 4.5l3 3 3-3" style="fill:none;stroke:#a2a9b5;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"></path></svg></div>
+          <div style="flex:1"></div>
+          <button style="height:40px;padding:0 16px;border:0;border-radius:8px;background:#7c9cf0;color:#121418;font:inherit;font-size:15px;font-weight:500;display:inline-flex;align-items:center;gap:8px"><span style="font-size:18px;line-height:1">+</span>Добавить сотрудника</button>
+        </div>
+        <div style="font-size:14px;color:#a2a9b5">Найдено: 5</div>
+        <div style="background:#1a1d23;border:1px solid #2e333c;border-radius:12px;overflow:hidden">
+          <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.5fr) minmax(0,1fr);gap:16px;padding:0 20px;height:40px;align-items:center;background:#1f2329;font-size:13px;font-weight:500;color:#a2a9b5"><span>ФИО</span><span>Должность</span><span>Отдел</span></div>
+          <sc-for list="{{ employees }}" as="e" hint-placeholder-count="5">
+            <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.5fr) minmax(0,1fr);align-items:center;gap:16px;padding:0 20px;height:52px;border-top:1px solid #2a2e36" style-hover="background:#22262e">
+              <span style="font-size:15px;font-weight:500">{{ e.name }}</span><span style="font-size:14px;color:#a2a9b5">{{ e.role }}</span><span><span style="display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:6px;font-size:13px;font-weight:500;background:{{ e.dbg }};color:{{ e.dfg }}">{{ e.dept }}</span></span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+    <div style="width:480px;height:680px;background:#121418;border:1px solid #2e333c;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#e8eaee">
+      <div style="width:400px;box-sizing:border-box;background:#1a1d23;border:1px solid #2e333c;border-radius:12px;padding:32px;display:flex;flex-direction:column;gap:24px">
+        <div style="display:flex;flex-direction:column;gap:4px"><h3 style="margin:0;font-size:24px;font-weight:600">Вход</h3><p style="margin:0;font-size:14px;color:#a2a9b5">Справочник сотрудников компании</p></div>
+        <div style="display:flex;gap:10px;align-items:flex-start;background:#3a1f1d;border:1px solid #5c2c28;border-radius:8px;padding:10px 12px;color:#f5b3ad;font-size:14px"><span style="flex:none;width:18px;height:18px;border-radius:50%;background:#f07b73;color:#121418;display:grid;place-items:center;font-size:12px;font-weight:600">!</span>Неверный email или пароль</div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:14px;font-weight:500">Email</label><div style="height:40px;box-sizing:border-box;padding:0 12px;border:1px solid #3a404a;border-radius:8px;background:#121418;font-size:15px;display:flex;align-items:center">demo@company.ru</div></div>
+          <div style="display:flex;flex-direction:column;gap:6px"><label style="font-size:14px;font-weight:500">Пароль</label><div style="height:40px;box-sizing:border-box;padding:0 12px;border:1px solid #f07b73;border-radius:8px;background:#121418;font-size:15px;display:flex;align-items:center;letter-spacing:3px">••••••</div><span style="font-size:13px;color:#f07b73">Не меньше 8 символов</span></div>
+        </div>
+        <button style="height:44px;width:100%;border:0;border-radius:8px;background:#7c9cf0;color:#121418;font:inherit;font-size:15px;font-weight:500;box-shadow:0 0 0 2px #1a1d23,0 0 0 4px #7c9cf0">Войти</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const D = {
+      'Разработка': { bg: '#e6edfb', fg: '#2a4a9a', dbg: '#22304d', dfg: '#a9c1f5' },
+      'HR':         { bg: '#f7e7f0', fg: '#8a2f5e', dbg: '#3a2431', dfg: '#efb3d2' },
+      'Аналитика':  { bg: '#e3f2ec', fg: '#1f6650', dbg: '#1d3830', dfg: '#9fd8c2' },
+      'Финансы':    { bg: '#f7eddc', fg: '#80530f', dbg: '#3a2e1b', dfg: '#e9c78d' },
+      'Маркетинг':  { bg: '#eee8f8', fg: '#5b3b94', dbg: '#2e2742', dfg: '#c8b5f0' },
+    };
+    const mk = (name, role, dept) => ({ name, role, dept, ...D[dept], rowBg: 'transparent', rowShadow: 'none' });
+    const employees = [
+      mk('Иванова Анна Сергеевна', 'Руководитель отдела', 'Разработка'),
+      mk('Петров Дмитрий Олегович', 'Frontend-разработчик', 'Разработка'),
+      mk('Смирнова Ольга Викторовна', 'HR-менеджер', 'HR'),
+      mk('Кузнецов Алексей Игоревич', 'Аналитик', 'Аналитика'),
+      mk('Фёдорова Мария Андреевна', 'Бухгалтер', 'Финансы'),
+    ];
+    const added = { ...mk('Соколов Игорь Павлович', 'Дизайнер', 'Маркетинг'), rowBg: '#eaf6ef', rowShadow: 'inset 3px 0 0 #1f7a4d' };
+    const depts = Object.keys(D).map(name => ({ name, ...D[name] }));
+
+    const base = { fieldBg: '#fff', emailBorder: '#c4cad3', passBorder: '#c4cad3', emailColor: '#5b6270', passColor: '#5b6270', email: 'name@company.ru', pass: 'Введите пароль', passSpacing: 'normal', emailShadow: 'none', btnOpacity: 1, loading: false, alert: false, emailErr: '', passErr: '' };
+    const filled = { emailColor: '#1a1d23', passColor: '#1a1d23', email: 'demo@company.ru', pass: '••••••••', passSpacing: '3px' };
+    const loginStates = [
+      { ...base, label: 'Обычное · фокус на email', emailBorder: '#2f5bd3', emailShadow: '0 0 0 3px rgba(47,91,211,.25)', btn: 'Войти' },
+      { ...base, ...filled, label: 'Отправка', fieldBg: '#f8f9fb', btn: 'Входим…', loading: true, btnOpacity: 0.8 },
+      { ...base, ...filled, label: 'Ошибка входа', alert: true, btn: 'Войти' },
+      { ...base, label: 'Ошибки полей', email: 'anna@', emailColor: '#1a1d23', emailBorder: '#c2362f', emailErr: 'Введите корректный email', passBorder: '#c2362f', passErr: 'Введите пароль', pass: '', btn: 'Войти' },
+    ];
+    const rbase = { ...base, pass: 'Придумайте пароль', pass2: 'Повторите пароль', pass2Border: '#c4cad3', pass2Err: '', hintColor: '#5b6270' };
+    const rfilled = { ...filled, email: 'new.user@company.ru', pass2: '••••••••' };
+    const regStates = [
+      { ...rbase, label: 'Обычное', btn: 'Создать аккаунт' },
+      { ...rbase, ...rfilled, label: 'Отправка', fieldBg: '#f8f9fb', btn: 'Создаём…', loading: true, btnOpacity: 0.8 },
+      { ...rbase, ...rfilled, email: 'demo@company.ru', label: 'Email занят', emailBorder: '#c2362f', emailErr: 'Этот email уже зарегистрирован', btn: 'Создать аккаунт' },
+      { ...rbase, ...rfilled, label: 'Ошибки полей', pass: '••••', passBorder: '#c2362f', hintColor: '#c2362f', pass2: '•••••', pass2Border: '#c2362f', pass2Err: 'Пароли не совпадают', btn: 'Создать аккаунт' },
+    ];
+
+    const lbase = { search: 'Поиск по ФИО', searchColor: '#5b6270', dept: 'Все отделы', rows: null, isLoading: false, count: '', empty: null };
+    const listStates = [
+      { ...lbase, label: 'Данные загружены', rows: employees, count: 'Найдено: 5' },
+      { ...lbase, label: 'Загрузка — скелетон', isLoading: true },
+      { ...lbase, label: 'Пусто после поиска', search: 'Сидоров', searchColor: '#1a1d23', dept: 'Финансы', count: 'Найдено: 0',
+        empty: { icon: '?', iconBg: '#f0f2f5', iconFg: '#5b6270', title: 'Никого не нашли', text: 'Попробуйте изменить запрос или выбрать другой отдел.', action: 'Сбросить фильтры', secondary: true } },
+      { ...lbase, label: 'Пусто совсем', count: 'Найдено: 0',
+        empty: { icon: '+', iconBg: '#e8eefc', iconFg: '#2f5bd3', title: 'Сотрудников пока нет', text: 'Добавьте первого сотрудника — он появится в этом списке.', action: 'Добавить сотрудника', primary: true } },
+      { ...lbase, label: 'Ошибка загрузки',
+        empty: { icon: '!', iconBg: '#fdecea', iconFg: '#c2362f', title: 'Не удалось загрузить список', text: 'Проверьте подключение к сети и попробуйте ещё раз.', action: 'Повторить', secondary: true } },
+    ];
+    const modalStates = [
+      { label: 'Модальное окно · ошибки после попытки отправки', rows: employees, count: 'Найдено: 5', dialog: true, toast: false },
+      { label: 'Успех · уведомление и подсветка новой строки', rows: [...employees, added], count: 'Найдено: 6', dialog: false, toast: true },
+    ];
+
+    const colorTokens = [
+      ['--color-bg', '#f6f7f9', '#121418'], ['--color-surface', '#ffffff', '#1a1d23'], ['--color-surface-2', '#f0f2f5', '#22262e'], ['--color-border', '#dde1e7', '#2e333c'],
+      ['--color-text', '#1a1d23', '#e8eaee'], ['--color-text-2', '#5b6270', '#a2a9b5'], ['--color-accent', '#2f5bd3', '#7c9cf0'], ['--color-accent-soft', '#e8eefc', '#232d45'],
+      ['--color-danger', '#c2362f', '#f07b73'], ['--color-danger-soft', '#fdecea', '#3a1f1d'], ['--color-success', '#1f7a4d', '#5fc792'], ['--color-success-soft', '#eaf6ef', '#1b3328'],
+    ].map(([name, light, dark]) => ({ name, light, dark }));
+    const spaces = [4, 8, 12, 16, 20, 24, 32, 40, 48].map(v => ({ v, px: v + 'px' }));
+    const skeleton = [['62%', '48%', '70px'], ['55%', '60%', '70px'], ['68%', '40%', '40px'], ['58%', '30%', '76px'], ['64%', '36%', '64px']].map(([a, b, c]) => ({ a, b, c }));
+
+    const tokensCss = `:root {
+  color-scheme: light dark;
+  /* Цвета */
+  --color-bg: #f6f7f9;
+  --color-surface: #ffffff;
+  --color-surface-2: #f0f2f5;
+  --color-border: #dde1e7;
+  --color-border-strong: #c4cad3;
+  --color-text: #1a1d23;
+  --color-text-2: #5b6270;
+  --color-accent: #2f5bd3;
+  --color-accent-hover: #2549b0;
+  --color-accent-soft: #e8eefc;
+  --color-on-accent: #ffffff;
+  --color-danger: #c2362f;
+  --color-danger-soft: #fdecea;
+  --color-success: #1f7a4d;
+  --color-success-soft: #eaf6ef;
+  --focus-ring: 0 0 0 3px rgb(47 91 211 / .25);
+  /* Метки отделов: фон / текст */
+  --dept-dev-bg: #e6edfb;  --dept-dev-fg: #2a4a9a;
+  --dept-hr-bg: #f7e7f0;   --dept-hr-fg: #8a2f5e;
+  --dept-an-bg: #e3f2ec;   --dept-an-fg: #1f6650;
+  --dept-fin-bg: #f7eddc;  --dept-fin-fg: #80530f;
+  --dept-mkt-bg: #eee8f8;  --dept-mkt-fg: #5b3b94;
+  /* Шрифты */
+  --font-sans: "Golos Text", system-ui, -apple-system,
+               "Segoe UI", sans-serif;
+  --text-xs: 13px;  --text-sm: 14px;  --text-md: 15px;
+  --text-lg: 20px;  --text-xl: 24px;  --text-2xl: 28px;
+  --leading: 1.45;
+  /* Отступы, шаг 4px */
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px;
+  --space-4: 16px; --space-5: 20px; --space-6: 24px;
+  --space-8: 32px; --space-10: 40px; --space-12: 48px;
+  /* Радиусы */
+  --radius-sm: 6px; --radius-md: 8px; --radius-lg: 12px;
+  /* Тени */
+  --shadow-sm: 0 1px 2px rgb(16 24 40 / .06);
+  --shadow-md: 0 4px 12px rgb(16 24 40 / .08);
+  --shadow-lg: 0 20px 48px rgb(16 24 40 / .18);
+  /* Размеры */
+  --control-h: 40px;      /* 44px на < 768px */
+  --content-w: 1040px;
+  --auth-w: 400px;
+  --dialog-w: 480px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #121418;
+    --color-surface: #1a1d23;
+    --color-surface-2: #22262e;
+    --color-border: #2e333c;
+    --color-border-strong: #3a404a;
+    --color-text: #e8eaee;
+    --color-text-2: #a2a9b5;
+    --color-accent: #7c9cf0;
+    --color-accent-hover: #9bb4f4;
+    --color-accent-soft: #232d45;
+    --color-on-accent: #121418;
+    --color-danger: #f07b73;
+    --color-danger-soft: #3a1f1d;
+    --color-success: #5fc792;
+    --color-success-soft: #1b3328;
+    --focus-ring: 0 0 0 3px rgb(124 156 240 / .3);
+    --dept-dev-bg: #22304d;  --dept-dev-fg: #a9c1f5;
+    --dept-hr-bg: #3a2431;   --dept-hr-fg: #efb3d2;
+    --dept-an-bg: #1d3830;   --dept-an-fg: #9fd8c2;
+    --dept-fin-bg: #3a2e1b;  --dept-fin-fg: #e9c78d;
+    --dept-mkt-bg: #2e2742;  --dept-mkt-fg: #c8b5f0;
+    --shadow-lg: 0 20px 48px rgb(0 0 0 / .5);
+  }
+}`;
+    return { employees, depts, loginStates, regStates, listStates, modalStates, colorTokens, spaces, skeleton, tokensCss };
+  }
+}
+</script>
+</body>
+</html>

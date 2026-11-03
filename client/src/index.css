@@ -1,14 +1,2 @@
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  font-family: system-ui, sans-serif;
-}
-
-.app {
-  padding: 24px;
-}
+@import './styles/tokens.css';
+@import './styles/base.css';
