@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { authApi } from '../api/auth';
 import { isAbortError, onUnauthorized } from '../api/client';
 import { AuthContext, type AuthContextValue, type AuthState } from './context';
@@ -22,11 +22,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  // Set while an explicit logout is in flight, so a 401 it provokes still counts as a logout
+  const loggingOutRef = useRef(false);
+
   // Any 401 from any request (expired session, logout in another tab) signs the user out
   useEffect(
     () =>
       onUnauthorized(() => {
-        setState({ status: 'anonymous' });
+        setState({ status: 'anonymous', loggedOut: loggingOutRef.current });
       }),
     [],
   );
@@ -42,12 +45,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const logout = useCallback(async () => {
+    loggingOutRef.current = true;
     try {
       await authApi.logout();
     } catch {
       // Already logged out on the server — the local outcome is the same
+    } finally {
+      loggingOutRef.current = false;
     }
-    setState({ status: 'anonymous' });
+    setState({ status: 'anonymous', loggedOut: true });
   }, []);
 
   const value = useMemo(

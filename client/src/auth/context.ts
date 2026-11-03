@@ -2,7 +2,10 @@ import type { LoginInput, RegisterInput, User } from '@test-ers/shared';
 import { createContext } from 'react';
 
 export type AuthState =
-  { status: 'loading' } | { status: 'authenticated'; user: User } | { status: 'anonymous' };
+  | { status: 'loading' }
+  | { status: 'authenticated'; user: User }
+  /** `loggedOut`: the user pressed "Выйти", as opposed to an expired or missing session. */
+  | { status: 'anonymous'; loggedOut?: boolean };
 
 export interface AuthContextValue {
   state: AuthState;

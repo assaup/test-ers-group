@@ -2,6 +2,7 @@ import { screen, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { apiRequest } from '../api/client';
 import { apiError, demoUser, mockApi, signedIn, signedOut } from '../test/fake-api';
+import { fakeEmployeesBackend } from '../test/fake-employees';
 import { renderApp } from '../test/render';
 
 const employees = { status: 200, body: { items: [] } };
@@ -230,6 +231,51 @@ describe('logout', () => {
 
     expect(await screen.findByRole('heading', { name: 'Вход' })).toBeInTheDocument();
     expect(calls.some((call) => call.path === '/api/auth/logout')).toBe(true);
+  });
+
+  it("does not hand the previous user's filters to the next one", async () => {
+    const backend = fakeEmployeesBackend();
+    mockApi({
+      ...backend.routes,
+      'POST /api/auth/logout': { status: 204 },
+      'POST /api/auth/login': signedIn,
+    });
+    const { user } = renderApp('/employees?q=иван&dept=1');
+    await user.click(await screen.findByRole('button', { name: 'Выйти' }));
+    await screen.findByRole('heading', { name: 'Вход' });
+
+    await user.type(screen.getByLabelText('Email'), 'demo@example.com');
+    await user.type(screen.getByLabelText('Пароль'), 'demo12345');
+    await user.click(screen.getByRole('button', { name: 'Войти' }));
+
+    expect(await screen.findByRole('heading', { name: 'Сотрудники' })).toBeInTheDocument();
+    expect(screen.getByTestId('location')).toHaveTextContent(/^\/employees$/);
+  });
+
+  it('brings the same user back to their filters after an expired session', async () => {
+    const backend = fakeEmployeesBackend();
+    let expired = false;
+    mockApi({
+      ...backend.routes,
+      'GET /api/employees': (call) =>
+        expired ? signedOut : backend.routes['GET /api/employees'](call),
+      'POST /api/auth/login': () => {
+        expired = false;
+        return signedIn;
+      },
+    });
+    const { user } = renderApp('/employees?q=иван');
+    await screen.findByText('Иванова Анна Сергеевна');
+
+    expired = true;
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Отдел' }), 'Разработка');
+    await screen.findByRole('heading', { name: 'Вход' });
+    await user.type(screen.getByLabelText('Email'), 'demo@example.com');
+    await user.type(screen.getByLabelText('Пароль'), 'demo12345');
+    await user.click(screen.getByRole('button', { name: 'Войти' }));
+
+    expect(await screen.findByRole('heading', { name: 'Сотрудники' })).toBeInTheDocument();
+    expect(screen.getByTestId('location')).toHaveTextContent('/employees?q=иван&dept=1');
   });
 
   it('signs out when any request reports an expired session', async () => {

@@ -13,7 +13,11 @@ export function RequireAuth() {
 
   if (state.status === 'loading') return <PageLoader />;
   if (state.status === 'anonymous') {
-    const from: FromState = { from: location.pathname + location.search };
+    // After an explicit logout the next person to sign in starts fresh, without the
+    // previous user's page and filters; an expired session brings the same user back
+    const from: FromState | undefined = state.loggedOut
+      ? undefined
+      : { from: location.pathname + location.search };
     return <Navigate to="/login" replace state={from} />;
   }
   return <Outlet />;
