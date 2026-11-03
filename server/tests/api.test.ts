@@ -156,3 +156,29 @@ describe('server restart', () => {
       .expect(200);
   });
 });
+
+describe('validation messages', () => {
+  it.each([
+    ['POST', '/api/auth/register', undefined],
+    ['POST', '/api/auth/register', { email: 'a@example.com', password: '        ' }],
+    ['POST', '/api/employees', undefined],
+    ['GET', `/api/employees?search=${'я'.repeat(101)}`, undefined],
+    ['GET', '/api/employees?departmentId=0x1', undefined],
+    ['GET', '/api/employees?search=a&search=b', undefined],
+  ] as const)('are in Russian for %s %s', async (method, path, body) => {
+    const { app, db } = createTestApp();
+    await seedDatabase(db);
+    const agent = request.agent(app);
+    await agent.post('/api/auth/register').send({ email: 'ru@example.com', password: 'secret123' });
+
+    const req = method === 'GET' ? agent.get(encodeURI(path)) : agent.post(path);
+    const res = await (body === undefined ? req : req.send(body));
+
+    expect(res.status).toBe(400);
+    const messages = Object.values(res.body.error.fields as Record<string, string>);
+    expect(messages.length).toBeGreaterThan(0);
+    for (const message of messages) {
+      expect(message).toMatch(/[а-яё]/i);
+    }
+  });
+});

@@ -38,6 +38,24 @@ describe('registerSchema', () => {
     const result = registerSchema.safeParse({ email: 'a@b.ru', password: 'x'.repeat(129) });
     expect(result.success).toBe(false);
   });
+
+  it('rejects a password made only of spaces', () => {
+    const errors = fieldErrors(
+      registerSchema.safeParse({ email: 'a@b.ru', password: ' '.repeat(8) }),
+    );
+    expect(errors).toEqual({ password: 'Пароль не может состоять только из пробелов' });
+  });
+
+  it('keeps spaces inside a password as typed', () => {
+    const result = registerSchema.parse({ email: 'a@b.ru', password: ' my pass ' });
+    expect(result.password).toBe(' my pass ');
+  });
+
+  it('reports a missing body in Russian', () => {
+    expect(fieldErrors(registerSchema.safeParse(undefined))).toEqual({
+      _: 'Некорректный формат запроса',
+    });
+  });
 });
 
 describe('loginSchema', () => {
