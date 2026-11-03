@@ -10,6 +10,11 @@ import { createAuthRouter } from './modules/auth/auth.router';
 import { createAuthService } from './modules/auth/auth.service';
 import { createSessionsRepository } from './modules/auth/sessions.repository';
 import { createUsersRepository } from './modules/auth/users.repository';
+import { createDepartmentsRepository } from './modules/departments/departments.repository';
+import { createDepartmentsRouter } from './modules/departments/departments.router';
+import { createEmployeesRepository } from './modules/employees/employees.repository';
+import { createEmployeesRouter } from './modules/employees/employees.router';
+import { createEmployeesService } from './modules/employees/employees.service';
 
 export interface AppDeps {
   db: Database;
@@ -31,6 +36,11 @@ export function createApp({
     sessionTtlSeconds,
   });
   const requireAuth = createRequireAuth(authService);
+  const departments = createDepartmentsRepository(db);
+  const employeesService = createEmployeesService({
+    employees: createEmployeesRepository(db),
+    departments,
+  });
 
   const app = express();
 
@@ -52,6 +62,9 @@ export function createApp({
       secureCookies,
     }),
   );
+
+  app.use('/api/departments', requireAuth, createDepartmentsRouter(departments));
+  app.use('/api/employees', requireAuth, createEmployeesRouter(employeesService));
 
   app.use('/api', notFoundHandler);
   app.use(errorHandler);

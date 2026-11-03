@@ -44,7 +44,9 @@ export default defineConfig([
     // supertest's res.body and expect.any() are typed `any` by design
     files: ['**/tests/**/*.ts', '**/*.test.{ts,tsx}'],
     rules: {
+      '@typescript-eslint/no-unsafe-argument': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
     },
   },
