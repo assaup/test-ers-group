@@ -23,6 +23,25 @@ describe('createApp', () => {
     expect(res.headers['x-powered-by']).toBeUndefined();
   });
 
+  it('does not force HTTPS by default, so plain-HTTP deployments keep working', async () => {
+    const res = await request(createApp({ db: createTestDb(), secureCookies: false })).get(
+      '/api/health',
+    );
+
+    expect(res.headers['content-security-policy']).toContain("default-src 'self'");
+    expect(res.headers['content-security-policy']).not.toContain('upgrade-insecure-requests');
+    expect(res.headers['strict-transport-security']).toBeUndefined();
+  });
+
+  it('upgrades to HTTPS and sends HSTS when secure cookies are on', async () => {
+    const res = await request(createApp({ db: createTestDb(), secureCookies: true })).get(
+      '/api/health',
+    );
+
+    expect(res.headers['content-security-policy']).toContain('upgrade-insecure-requests');
+    expect(res.headers['strict-transport-security']).toContain('max-age=');
+  });
+
   it('returns a JSON 404 for unknown API routes', async () => {
     const res = await request(app).get('/api/nope');
 

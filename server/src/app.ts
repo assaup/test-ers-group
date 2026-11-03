@@ -48,7 +48,16 @@ export function createApp({
 
   const app = express();
 
-  app.use(helmet());
+  // HSTS and upgrade-insecure-requests only make sense behind HTTPS: over plain HTTP the
+  // browser would rewrite script and style URLs to https:// and the page stays blank
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: { upgradeInsecureRequests: secureCookies ? [] : null },
+      },
+      strictTransportSecurity: secureCookies,
+    }),
+  );
   app.use(express.json({ limit: '10kb' }));
 
   app.get('/api/health', (_req, res) => {

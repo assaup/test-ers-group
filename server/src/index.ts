@@ -22,15 +22,17 @@ if (demoUserAdded) {
 }
 
 const clientBuilt = existsSync(join(config.clientDir, 'index.html'));
-const clientDir = clientBuilt ? config.clientDir : undefined;
+const clientDir = config.isProduction && clientBuilt ? config.clientDir : undefined;
 
 const server = createApp({ db, clientDir }).listen(config.port, () => {
   console.info(`Server listening on http://localhost:${config.port}`);
-  console.info(
-    clientBuilt
-      ? `Serving the built client at http://localhost:${config.port}`
-      : 'Client is not built: API only (use `npm run dev` or `npm run build` first)',
-  );
+  if (!config.isProduction) {
+    console.info('Development mode: the client is served by Vite (http://localhost:5173)');
+  } else if (clientDir) {
+    console.info(`Serving the built client at http://localhost:${config.port}`);
+  } else {
+    console.info('Client is not built: API only (run `npm run build` first)');
+  }
 });
 
 function shutdown() {

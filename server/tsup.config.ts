@@ -12,4 +12,6 @@ export default defineConfig({
   removeNodeProtocol: false,
   // shared ships TypeScript sources, Node can't load them from node_modules — bundle them in
   noExternal: ['@test-ers/shared'],
+  // The bundle is what `npm start` runs, so it is the production build by definition
+  env: { NODE_ENV: 'production' },
 });
