@@ -339,6 +339,87 @@ describe('EmployeesPage: adding an employee', () => {
   });
 });
 
+describe('EmployeesPage: dialog edge cases', () => {
+  async function openWithSlowSave() {
+    const { routes } = fakeEmployeesBackend();
+    let finish: ((response: { status: number; body?: unknown }) => void) | undefined;
+    mockApi({
+      ...routes,
+      'POST /api/employees': () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+    });
+    const { user } = renderApp('/employees');
+    await screen.findByText('Найдено: 5');
+    await user.click(screen.getByRole('button', { name: 'Добавить сотрудника' }));
+    const dialog = screen.getByRole('dialog', { name: 'Новый сотрудник' });
+    await user.type(within(dialog).getByLabelText(/ФИО/), 'Новый Сотрудник');
+    await user.type(within(dialog).getByLabelText(/Должность/), 'Стажёр');
+    await user.selectOptions(within(dialog).getByRole('combobox', { name: /Отдел/ }), 'HR');
+    await user.click(within(dialog).getByRole('button', { name: 'Добавить' }));
+    return {
+      user,
+      dialog: dialog as HTMLDialogElement,
+      finish: (response: { status: number; body?: unknown }) => finish?.(response),
+    };
+  }
+
+  it('cannot be closed while saving', async () => {
+    const { user, dialog } = await openWithSlowSave();
+
+    const escape = new Event('cancel', { cancelable: true });
+    dialog.dispatchEvent(escape);
+    await user.click(dialog); // backdrop
+
+    expect(escape.defaultPrevented).toBe(true);
+    expect(within(dialog).getByRole('button', { name: 'Отмена' })).toBeDisabled();
+    expect(within(dialog).getByRole('button', { name: 'Закрыть' })).toBeDisabled();
+    expect(dialog).toBeVisible();
+  });
+
+  it('ignores a response that arrives after the dialog was closed anyway', async () => {
+    const { user, dialog, finish } = await openWithSlowSave();
+
+    // A browser may still force-close a modal (e.g. a repeated Esc)
+    dialog.close();
+    finish(apiError(500, 'INTERNAL_ERROR'));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    await user.click(screen.getByRole('button', { name: 'Добавить сотрудника' }));
+
+    expect(within(dialog).queryByRole('alert')).not.toBeInTheDocument();
+    expect(within(dialog).getByLabelText(/ФИО/)).toHaveValue('');
+  });
+
+  it('shows a department loading failure in the dialog and lets the user retry', async () => {
+    const { routes } = fakeEmployeesBackend();
+    let failures = 1;
+    mockApi({
+      ...routes,
+      'GET /api/departments': () =>
+        failures-- > 0 ? apiError(500, 'INTERNAL_ERROR') : routes['GET /api/departments'],
+    });
+    const { user } = renderApp('/employees');
+    await screen.findByText('Найдено: 5');
+
+    await user.click(screen.getByRole('button', { name: 'Добавить сотрудника' }));
+    const dialog = screen.getByRole('dialog', { name: 'Новый сотрудник' });
+
+    expect(within(dialog).getByRole('alert')).toHaveTextContent(
+      'Не удалось загрузить список отделов',
+    );
+    expect(within(dialog).getByRole('button', { name: 'Добавить' })).toBeDisabled();
+
+    await user.click(within(dialog).getByRole('button', { name: 'Повторить' }));
+
+    await waitFor(() => {
+      expect(within(dialog).getByRole('button', { name: 'Добавить' })).toBeEnabled();
+    });
+    expect(within(dialog).queryByRole('alert')).not.toBeInTheDocument();
+    expect(within(dialog).getAllByRole('option')).toHaveLength(DEPARTMENTS.length + 1);
+  });
+});
+
 describe('EmployeesPage: session', () => {
   it('returns to the login page when the session expires', async () => {
     mockApi({

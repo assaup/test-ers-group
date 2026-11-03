@@ -205,6 +205,8 @@ export function EmployeesPage() {
       <AddEmployeeDialog
         open={dialogOpen}
         departments={departments.data ?? []}
+        departmentsStatus={departments.status}
+        onRetryDepartments={departments.reload}
         onClose={() => {
           setDialogOpen(false);
         }}

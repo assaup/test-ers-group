@@ -11,6 +11,15 @@
   line-height: 1.4;
 }
 
+.alert__text {
+  flex: 1;
+}
+
+.alert__action {
+  flex: none;
+  margin: -6px -6px -6px 0;
+}
+
 .alert__icon {
   display: grid;
   flex: none;
