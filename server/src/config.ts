@@ -16,6 +16,6 @@ export const config = {
   // upgrade-insecure-requests. Over plain HTTP (LAN, a VPS without TLS) any of them breaks the app
   secureCookies: process.env.SECURE_COOKIES === 'true',
   sessionTtlSeconds: 7 * 24 * 60 * 60,
-  // Per IP, per 15 minutes, on login and register
-  authRateLimit: 20,
+  // Failed attempts per IP per 15 minutes on login and register
+  authRateLimit: 30,
 };

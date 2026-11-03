@@ -21,7 +21,7 @@ export interface AppDeps {
   db: Database;
   secureCookies?: boolean;
   sessionTtlSeconds?: number;
-  /** Requests per IP per 15 minutes on login/register; `false` disables the limit (tests). */
+  /** Failed login/register attempts per IP per 15 minutes; `false` disables the limit (tests). */
   authRateLimit?: number | false;
   /** Built client to serve alongside the API; omitted in development (Vite serves it). */
   clientDir?: string | undefined;
@@ -97,6 +97,8 @@ function createAuthRateLimit(limit: number | false): RequestHandler {
   return rateLimit({
     windowMs: 15 * 60 * 1000,
     limit,
+    // Only failed attempts count: someone logging in and out a lot is not a brute force
+    skipSuccessfulRequests: true,
     standardHeaders: 'draft-8',
     legacyHeaders: false,
     handler: (_req, _res, next) => {

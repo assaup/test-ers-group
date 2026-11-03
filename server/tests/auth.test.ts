@@ -263,4 +263,22 @@ describe('rate limiting', () => {
       expect((await agent.get('/api/auth/me')).status).toBe(200);
     }
   });
+
+  it('does not count successful logins', async () => {
+    const { app } = createTestApp({ authRateLimit: 2 });
+    await request(app).post('/api/auth/register').send(credentials);
+
+    for (let i = 0; i < 6; i++) {
+      expect((await request(app).post('/api/auth/login').send(credentials)).status).toBe(200);
+    }
+    // Failures still count: two wrong passwords use up the limit
+    await request(app)
+      .post('/api/auth/login')
+      .send({ ...credentials, password: 'wrong' });
+    await request(app)
+      .post('/api/auth/login')
+      .send({ ...credentials, password: 'wrong' });
+
+    expect((await request(app).post('/api/auth/login').send(credentials)).status).toBe(429);
+  });
 });

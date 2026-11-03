@@ -17,5 +17,9 @@ export function asString(value: SQLOutputValue | undefined): string {
 const SQLITE_CONSTRAINT_UNIQUE = 2067;
 
 export function isUniqueViolation(error: unknown): boolean {
-  return error instanceof Error && 'errcode' in error && error.errcode === SQLITE_CONSTRAINT_UNIQUE;
+  if (!(error instanceof Error)) return false;
+  // `errcode` is the precise signal; the message is SQLite's own text and works even on Node
+  // versions whose node:sqlite errors don't carry the extended code
+  if ('errcode' in error && error.errcode === SQLITE_CONSTRAINT_UNIQUE) return true;
+  return error.message.includes('UNIQUE constraint failed');
 }
