@@ -125,7 +125,7 @@
     gap: var(--space-3);
   }
 
-  .employee-table__row {
+  .employee-table .employee-table__row {
     display: flex;
     flex-direction: column;
     gap: 2px;
