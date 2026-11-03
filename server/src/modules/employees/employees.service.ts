@@ -17,7 +17,7 @@ export function createEmployeesService({ employees, departments }: EmployeesServ
     },
 
     create(input: CreateEmployeeInput): Employee {
-      // Checked explicitly (not via the FK error) to point the form at the right field
+      // Проверяем явно (а не по ошибке внешнего ключа), чтобы указать форме на нужное поле
       if (!departments.findById(input.departmentId)) {
         throw new AppError(400, 'VALIDATION_ERROR', 'Проверьте правильность заполнения полей', {
           departmentId: 'Такого отдела нет',

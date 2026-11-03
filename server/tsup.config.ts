@@ -8,10 +8,10 @@ export default defineConfig({
   outDir: 'dist',
   clean: true,
   sourcemap: true,
-  // `sqlite` exists only as `node:sqlite` — stripping the prefix breaks the import
+  // Модуль `sqlite` существует только как `node:sqlite` — без префикса импорт ломается
   removeNodeProtocol: false,
-  // shared ships TypeScript sources, Node can't load them from node_modules — bundle them in
+  // shared поставляется исходниками на TypeScript, Node не загрузит их из node_modules — вшиваем в бандл
   noExternal: ['@test-ers/shared'],
-  // The bundle is what `npm start` runs, so it is the production build by definition
+  // Бандл — это то, что запускает `npm start`, поэтому он по определению production-сборка
   env: { NODE_ENV: 'production' },
 });

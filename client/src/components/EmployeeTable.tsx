@@ -7,7 +7,7 @@ import './EmployeeTable.css';
 interface EmployeeTableProps {
   employees: Employee[];
   highlightedId?: number | undefined;
-  /** Rows are from the previous request while a new one is in flight. */
+  /** Строки от предыдущего запроса, пока выполняется новый. */
   stale?: boolean;
 }
 

@@ -2,14 +2,14 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
-// `npm run dev` passes the same environment to the server and to Vite, so PORT moves both
+// `npm run dev` передаёт одно окружение и серверу, и Vite, поэтому PORT меняет порт для обоих
 const apiPort = process.env.PORT ?? '3000';
 
 export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
-    // Same-origin in dev: the httpOnly session cookie works without CORS
+    // В разработке один origin: httpOnly-cookie сессии работает без CORS
     proxy: {
       '/api': `http://localhost:${apiPort}`,
     },

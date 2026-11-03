@@ -3,11 +3,11 @@ import './Alert.css';
 
 interface AlertProps {
   children: string;
-  /** Optional control next to the message, e.g. a retry button. */
+  /** Необязательный элемент рядом с сообщением, например кнопка повтора. */
   action?: ReactNode;
 }
 
-/** Form-level error shown above the fields (design: "Сообщение об ошибке над формой"). */
+/** Ошибка всей формы над полями (в макете — «Сообщение об ошибке над формой»). */
 export function Alert({ children, action }: AlertProps) {
   return (
     <div className="alert" role="alert">

@@ -30,7 +30,7 @@ export function LoginPage() {
 
     setSubmitting(true);
     try {
-      // On success GuestOnly redirects away, so there is no state to reset here
+      // При успехе GuestOnly сам уводит со страницы, поэтому сбрасывать состояние не нужно
       await login(parsed.data);
     } catch (error) {
       if (error instanceof ApiError && Object.keys(error.fields).length > 0) {

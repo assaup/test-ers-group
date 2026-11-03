@@ -2,13 +2,13 @@ import { join } from 'node:path';
 import express, { Router } from 'express';
 
 /**
- * Serves the built React app from the same origin as the API (production mode).
- * Any other GET outside /api gets index.html, so client-side routes survive a page reload.
+ * Отдаёт собранное React-приложение с того же адреса, что и API (production-режим).
+ * Любой другой GET вне /api получает index.html, поэтому клиентские маршруты переживают перезагрузку.
  */
 export function serveClient(clientDir: string) {
   const router = Router();
 
-  // Vite puts a content hash into asset names, so they can be cached forever
+  // Vite добавляет хеш содержимого в имена ассетов, поэтому их можно кэшировать навсегда
   router.use(
     '/assets',
     express.static(join(clientDir, 'assets'), { immutable: true, maxAge: '1y', index: false }),

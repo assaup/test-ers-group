@@ -11,7 +11,7 @@ const emailSchema = z
   .max(254, 'Слишком длинный email')
   .pipe(z.email('Введите корректный email'));
 
-/** Message for a body that is not a JSON object at all. */
+/** Сообщение для тела запроса, которое вообще не является JSON-объектом. */
 export const INVALID_BODY_MESSAGE = 'Некорректный формат запроса';
 
 export const registerSchema = z.object(
@@ -21,13 +21,13 @@ export const registerSchema = z.object(
       .string({ error: 'Введите пароль' })
       .min(PASSWORD_MIN_LENGTH, `Пароль должен быть не короче ${PASSWORD_MIN_LENGTH} символов`)
       .max(PASSWORD_MAX_LENGTH, `Пароль должен быть не длиннее ${PASSWORD_MAX_LENGTH} символов`)
-      // Not trimmed (spaces inside a password are fine), but it can't be only spaces
+      // Пароль не обрезаем (пробелы внутри допустимы), но из одних пробелов он состоять не может
       .refine((password) => password.trim() !== '', 'Пароль не может состоять только из пробелов'),
   },
   { error: INVALID_BODY_MESSAGE },
 );
 
-// Login doesn't re-check password rules: a wrong password is just INVALID_CREDENTIALS
+// При входе правила пароля не проверяем: неверный пароль — это просто INVALID_CREDENTIALS
 export const loginSchema = z.object(
   {
     email: emailSchema,

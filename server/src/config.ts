@@ -1,21 +1,21 @@
 import { fileURLToPath } from 'node:url';
 
-// Both resolve the same from src/ (tsx) and from dist/ (bundled build)
+// Оба пути одинаково разрешаются и из src/ (tsx), и из dist/ (собранный бандл)
 const defaultDbPath = fileURLToPath(new URL('../data/app.db', import.meta.url));
 const defaultClientDir = fileURLToPath(new URL('../../client/dist', import.meta.url));
 
 export const config = {
   port: Number(process.env.PORT ?? 3000),
   dbPath: process.env.DB_PATH ?? defaultDbPath,
-  /** Served only in production and only if it has been built (`npm run build`). */
+  /** Отдаётся только в production и только если клиент собран (`npm run build`). */
   clientDir: process.env.CLIENT_DIR ?? defaultClientDir,
-  // The tsup build inlines NODE_ENV=production, so `npm start` is production and `npm run dev`
-  // is not: in dev the client comes from Vite and a stale client/dist must not be served
+  // Сборка tsup вшивает NODE_ENV=production: `npm start` — это production, а `npm run dev` — нет.
+  // В разработке клиент отдаёт Vite, и устаревшую сборку из client/dist отдавать нельзя
   isProduction: process.env.NODE_ENV === 'production',
-  // Opt-in, only for deployments behind HTTPS: adds Secure to the session cookie, HSTS and
-  // upgrade-insecure-requests. Over plain HTTP (LAN, a VPS without TLS) any of them breaks the app
+  // Включается явно и только за HTTPS: флаг Secure у cookie сессии, HSTS и
+  // upgrade-insecure-requests. По обычному HTTP (локальная сеть, сервер без TLS) любой из них ломает приложение
   secureCookies: process.env.SECURE_COOKIES === 'true',
   sessionTtlSeconds: 7 * 24 * 60 * 60,
-  // Failed attempts per IP per 15 minutes on login and register
+  // Неудачных попыток с одного IP за 15 минут на входе и регистрации
   authRateLimit: 30,
 };

@@ -6,9 +6,9 @@ export interface EmployeeFilters {
 }
 
 /**
- * Filters from the page URL (?q=…&dept=…), checked with the same schema the API uses.
- * Anything the API would reject (dept=0, a 300-character search) is dropped instead,
- * so a hand-edited or outdated link never turns into an error screen.
+ * Фильтры из адреса страницы (?q=…&dept=…), проверенные той же схемой, что и в API.
+ * Всё, что API отклонил бы (dept=0, поиск из 300 символов), просто отбрасывается,
+ * поэтому отредактированная вручную или устаревшая ссылка не приводит к экрану ошибки.
  */
 export function readFilters(params: URLSearchParams): EmployeeFilters {
   const { search, departmentId } = employeesQuerySchema.shape;
@@ -21,7 +21,7 @@ export function readFilters(params: URLSearchParams): EmployeeFilters {
   };
 }
 
-/** URL parameters for `filters`; empty filters are left out. */
+/** Параметры адреса для `filters`; пустые фильтры не попадают в адрес. */
 export function filtersToParams({ search, departmentId }: EmployeeFilters) {
   const params = new URLSearchParams();
   if (search) params.set('q', search);

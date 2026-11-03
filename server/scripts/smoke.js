@@ -1,5 +1,5 @@
-// Starts the built server against a throwaway database and checks that it boots and answers.
-// Catches bundling problems that unit tests (which run the TypeScript sources) can't see.
+// Запускает собранный сервер на временной базе и проверяет, что он стартует и отвечает.
+// Ловит проблемы сборки, которых не видят тесты: они работают с исходниками на TypeScript.
 import { spawn } from 'node:child_process';
 import { once } from 'node:events';
 import { existsSync, mkdtempSync, rmSync } from 'node:fs';
@@ -41,7 +41,7 @@ async function check() {
 }
 
 async function cleanUp() {
-  // Wait for the process to exit: on Windows the open database file blocks deleting the dir
+  // Ждём завершения процесса: на Windows открытый файл базы не даёт удалить папку
   if (server.exitCode === null) {
     server.kill();
     await once(server, 'exit');
@@ -59,7 +59,7 @@ async function waitForHealth() {
       const res = await fetch(`${BASE_URL}/api/health`);
       if (res.ok) return true;
     } catch {
-      // not listening yet
+      // сервер ещё не слушает порт
     }
     await new Promise((resolve) => setTimeout(resolve, 100));
   }

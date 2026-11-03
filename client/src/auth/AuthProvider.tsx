@@ -6,7 +6,7 @@ import { AuthContext, type AuthContextValue, type AuthState } from './context';
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AuthState>({ status: 'loading' });
 
-  // The session cookie is httpOnly, so the only way to know who we are is to ask the server
+  // Cookie сессии httpOnly, поэтому узнать текущего пользователя можно только у сервера
   useEffect(() => {
     const controller = new AbortController();
     authApi
@@ -22,10 +22,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  // Set while an explicit logout is in flight, so a 401 it provokes still counts as a logout
+  // Поднят, пока идёт явный выход, чтобы вызванный им ответ 401 тоже считался выходом
   const loggingOutRef = useRef(false);
 
-  // Any 401 from any request (expired session, logout in another tab) signs the user out
+  // Любой ответ 401 на любой запрос (сессия истекла, выход в другой вкладке) разлогинивает
   useEffect(
     () =>
       onUnauthorized(() => {
@@ -49,7 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await authApi.logout();
     } catch {
-      // Already logged out on the server — the local outcome is the same
+      // На сервере сессии уже нет — результат для клиента тот же
     } finally {
       loggingOutRef.current = false;
     }

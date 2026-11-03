@@ -14,11 +14,11 @@ interface SelectFieldProps extends SelectHTMLAttributes<HTMLSelectElement> {
   hideLabel?: boolean;
   error?: string | undefined;
   options: Option[];
-  /** First option with an empty value ("Все отделы", "Выберите отдел"). */
+  /** Первый пункт с пустым значением («Все отделы», «Выберите отдел»). */
   placeholder: string;
 }
 
-/** Native <select> styled like the inputs: keyboard and screen readers work for free. */
+/** Нативный <select> в стиле полей ввода: клавиатура и экранные дикторы работают сами. */
 export function SelectField({
   label,
   hideLabel,

@@ -2,7 +2,7 @@ export function messageId(id: string) {
   return `${id}-message`;
 }
 
-/** ARIA wiring for the control inside a FieldShell. */
+/** ARIA-связки для поля внутри FieldShell. */
 export function controlAria(id: string, error: string | undefined, hint: string | undefined) {
   return {
     'aria-invalid': error ? true : undefined,

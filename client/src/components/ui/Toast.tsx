@@ -4,7 +4,7 @@ import './Toast.css';
 interface ToastProps {
   message: string;
   onClose: () => void;
-  /** Auto-dismiss delay in ms. */
+  /** Через сколько миллисекунд скрыть автоматически. */
   duration?: number;
 }
 

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-// Safety net: every schema has its own Russian messages, but any zod default that slips
-// through (an unexpected type, an array instead of a string) is Russian too
+// Страховка: у каждой схемы свои русские сообщения, но любое стандартное сообщение zod,
+// которое проскочит (неожиданный тип, массив вместо строки), тоже будет по-русски
 z.config(z.locales.ru());
 
 export { z };

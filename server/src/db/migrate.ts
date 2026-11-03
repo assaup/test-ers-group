@@ -1,7 +1,7 @@
 import { transaction, type Database } from './connection';
 import { migrations as defaultMigrations, type Migration } from './migrations';
 
-/** Applies pending migrations in order, each in its own transaction. Returns applied ids. */
+/** Применяет новые миграции по порядку, каждую в своей транзакции. Возвращает их id. */
 export function runMigrations(db: Database, migrations: readonly Migration[] = defaultMigrations) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS migrations (

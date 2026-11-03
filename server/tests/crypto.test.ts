@@ -27,7 +27,7 @@ describe('hashPassword / verifyPassword', () => {
   });
 
   it('verifies hashes stored with other parameters', async () => {
-    // As if written by an older version with weaker params and a shorter key
+    // Как будто записано старой версией: параметры слабее, ключ короче
     const salt = randomBytes(16);
     const key = scryptSync('secret123', salt, 32, { N: 1024, r: 8, p: 1 });
     const legacy = `scrypt$1024$8$1$${salt.toString('base64')}$${key.toString('base64')}`;

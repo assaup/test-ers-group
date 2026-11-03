@@ -25,7 +25,7 @@ export function createUsersRepository(db: Database) {
       };
     },
 
-    /** Returns `undefined` when the email is already taken. */
+    /** Возвращает `undefined`, если email уже занят. */
     create(email: string, passwordHash: string): User | undefined {
       try {
         const row = insert.get(email, passwordHash);

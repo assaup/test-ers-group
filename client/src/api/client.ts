@@ -27,7 +27,7 @@ interface RequestOptions {
 
 let unauthorizedHandler: (() => void) | undefined;
 
-/** Called whenever the API says the session is gone, wherever the request came from. */
+/** Вызывается, когда API сообщает, что сессии больше нет, откуда бы ни пришёл запрос. */
 export function onUnauthorized(handler: () => void) {
   unauthorizedHandler = handler;
   return () => {
@@ -48,7 +48,7 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
       signal,
     });
   } catch (error) {
-    // Aborts are intentional (a newer request replaced this one) — let callers ignore them
+    // Отмена запроса намеренная (его заменил более новый) — вызывающий код её игнорирует
     if (signal?.aborted) throw error;
     throw new ApiError(0, 'NETWORK_ERROR', 'Network request failed');
   }

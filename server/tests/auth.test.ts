@@ -271,7 +271,7 @@ describe('rate limiting', () => {
     for (let i = 0; i < 6; i++) {
       expect((await request(app).post('/api/auth/login').send(credentials)).status).toBe(200);
     }
-    // Failures still count: two wrong passwords use up the limit
+    // Неудачные попытки по-прежнему считаются: два неверных пароля исчерпывают лимит
     await request(app)
       .post('/api/auth/login')
       .send({ ...credentials, password: 'wrong' });

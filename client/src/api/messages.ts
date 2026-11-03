@@ -1,6 +1,6 @@
 import { ApiError, type ClientErrorCode } from './client';
 
-// User-facing text is chosen by error code, never taken from the server message verbatim
+// Текст для пользователя выбирается по коду ошибки, а не берётся из сообщения сервера как есть
 const MESSAGES: Partial<Record<ClientErrorCode, string>> = {
   INVALID_CREDENTIALS: 'Неверный email или пароль',
   EMAIL_TAKEN: 'Этот email уже зарегистрирован',

@@ -6,17 +6,17 @@ import './Field.css';
 export interface FieldShellProps {
   id: string;
   label: string;
-  /** Keeps the label for screen readers when the design has no visible one. */
+  /** Оставляет подпись для экранных дикторов, когда в макете её не видно. */
   hideLabel?: boolean;
   required?: boolean | undefined;
   error?: string | undefined;
-  /** Shown under the field; replaced by the error when there is one. */
+  /** Показывается под полем; при ошибке заменяется ею. */
   hint?: string | undefined;
   className?: string | undefined;
   children: ReactNode;
 }
 
-/** Label + control + message, shared by TextField and SelectField. */
+/** Подпись + поле + сообщение, общее для TextField и SelectField. */
 export function FieldShell({
   id,
   label,

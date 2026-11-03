@@ -22,7 +22,7 @@ export default defineConfig([
     rules: {
       '@typescript-eslint/consistent-type-imports': 'error',
       '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true }],
-      // Express tells error handlers apart by arity, so `_next` must stay in the signature
+      // Express отличает обработчик ошибок по числу аргументов, поэтому `_next` должен остаться
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       eqeqeq: ['error', 'always'],
       'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
@@ -41,14 +41,14 @@ export default defineConfig([
   },
 
   {
-    // supertest's res.body and expect.any() are typed `any` by design
+    // res.body из supertest и expect.any() по своей природе имеют тип `any`
     files: ['**/tests/**/*.ts', '**/*.test.{ts,tsx}', 'client/src/test/**'],
     rules: {
       '@typescript-eslint/no-unsafe-argument': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-call': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
-      // Test helpers are never hot-reloaded
+      // Тестовые хелперы никогда не перезагружаются через HMR
       'react-refresh/only-export-components': 'off',
     },
   },

@@ -6,21 +6,21 @@ import { runMigrations } from '../src/db/migrate';
 import { seedDatabase } from '../src/db/seed';
 import { SESSION_COOKIE } from '../src/lib/session-token';
 
-/** A fresh migrated in-memory database — real SQLite, no mocks. */
+/** Новая база в памяти с применёнными миграциями — настоящий SQLite, без моков. */
 export function createTestDb() {
   const db = openDatabase(IN_MEMORY);
   runMigrations(db);
   return db;
 }
 
-/** App over a fresh database; rate limiting is off unless a test turns it on. */
+/** Приложение на новой базе; лимит попыток выключен, если тест не включит его сам. */
 export function createTestApp(options: Partial<AppDeps> = {}) {
   const db = options.db ?? createTestDb();
   const app = createApp({ authRateLimit: false, ...options, db });
   return { app, db };
 }
 
-/** Seeded app plus an agent already logged in as a fresh user. */
+/** Приложение с сидом и агент, уже вошедший под новым пользователем. */
 export async function createLoggedInApp(options: Partial<AppDeps> = {}) {
   const { app, db } = createTestApp(options);
   await seedDatabase(db);

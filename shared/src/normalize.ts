@@ -1,6 +1,6 @@
 /**
- * Canonical form of a full name for case-insensitive search.
- * SQLite's lower()/LIKE only fold ASCII, so we fold Cyrillic here (see ADR 003).
+ * Каноническая форма ФИО для поиска без учёта регистра.
+ * lower() и LIKE в SQLite понижают регистр только у ASCII, поэтому кириллицу обрабатываем здесь (ADR 003).
  */
 export function normalizeForSearch(value: string): string {
   return collapseWhitespace(value).toLocaleLowerCase('ru-RU').replaceAll('ё', 'е');

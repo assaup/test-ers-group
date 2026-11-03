@@ -33,7 +33,7 @@ export function RegisterPage() {
     try {
       await register({ email: parsed.data.email, password: parsed.data.password });
     } catch (error) {
-      // EMAIL_TAKEN arrives with fields.email, so it lands under the email input
+      // EMAIL_TAKEN приходит с fields.email, поэтому ошибка встаёт под полем email
       if (error instanceof ApiError && Object.keys(error.fields).length > 0) {
         showErrors(error.fields);
       } else {

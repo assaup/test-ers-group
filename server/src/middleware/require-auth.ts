@@ -28,7 +28,7 @@ export function createRequireAuth(authService: AuthService): RequestHandler {
   };
 }
 
-/** For handlers behind requireAuth: the user is guaranteed to be set. */
+/** Для обработчиков за requireAuth: пользователь гарантированно задан. */
 export function getAuthUser(req: Request): User {
   if (!req.user) {
     throw new Error('getAuthUser() called on a route without requireAuth');

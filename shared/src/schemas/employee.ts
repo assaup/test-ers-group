@@ -25,12 +25,12 @@ export const createEmployeeSchema = z.object(
   { error: INVALID_BODY_MESSAGE },
 );
 
-// Query string values arrive as strings; an empty value means "no filter"
+// Параметры query приходят строками; пустое значение означает «без фильтра»
 const emptyToUndefined = (value: unknown) => (value === '' ? undefined : value);
 
 const INVALID_DEPARTMENT = 'Некорректный отдел';
 
-/** Shared by the API and by the client when it reads filters from the page URL. */
+/** Используется и API, и клиентом, когда он читает фильтры из адреса страницы. */
 export const employeesQuerySchema = z.object(
   {
     search: z.preprocess(
@@ -41,7 +41,7 @@ export const employeesQuerySchema = z.object(
         .max(EMPLOYEE_TEXT_MAX_LENGTH, 'Слишком длинный поисковый запрос')
         .optional(),
     ),
-    // A plain positive integer only: Number() would also accept "0x1", "1e0" or " 2 "
+    // Только обычное положительное целое: Number() принял бы и "0x1", и "1e0", и " 2 "
     departmentId: z.preprocess(
       emptyToUndefined,
       z

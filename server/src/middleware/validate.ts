@@ -2,7 +2,7 @@ import { toFieldErrors } from '@test-ers/shared';
 import type { z } from 'zod';
 import { AppError } from '../lib/errors';
 
-/** Parses request data with a shared schema; failures become 400 with per-field messages. */
+/** Разбирает данные запроса общей схемой; ошибки превращаются в 400 с сообщениями по полям. */
 export function parseInput<Schema extends z.ZodType>(
   schema: Schema,
   data: unknown,

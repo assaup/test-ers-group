@@ -1,7 +1,7 @@
 import { randomBytes, scrypt, timingSafeEqual } from 'node:crypto';
 
-// See ADR 004. Params live inside the stored string, so they can be raised later
-// without invalidating existing hashes.
+// См. ADR 004. Параметры хранятся внутри строки хеша, поэтому их можно усилить позже,
+// не ломая уже сохранённые хеши.
 const DEFAULT_PARAMS = { N: 16384, r: 8, p: 1 };
 const KEY_LENGTH = 64;
 const SALT_LENGTH = 16;
@@ -12,7 +12,7 @@ interface ScryptParams {
   p: number;
 }
 
-/** Format: `scrypt$N$r$p$<salt base64>$<hash base64>` */
+/** Формат: `scrypt$N$r$p$<соль base64>$<хеш base64>` */
 export async function hashPassword(password: string): Promise<string> {
   const salt = randomBytes(SALT_LENGTH);
   const key = await deriveKey(password, salt, DEFAULT_PARAMS, KEY_LENGTH);
@@ -38,7 +38,7 @@ function parseHash(stored: string) {
   return { params, salt: Buffer.from(salt, 'base64'), key: Buffer.from(key, 'base64') };
 }
 
-// Async scrypt runs on the libuv thread pool and doesn't block the event loop
+// Асинхронный scrypt выполняется в пуле потоков libuv и не блокирует цикл событий
 function deriveKey(password: string, salt: Buffer, params: ScryptParams, length: number) {
   return new Promise<Buffer>((resolve, reject) => {
     scrypt(password, salt, length, { ...params, maxmem: 64 * 1024 * 1024 }, (error, key) => {

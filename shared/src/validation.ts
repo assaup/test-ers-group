@@ -2,7 +2,7 @@ import type { z } from 'zod';
 
 export type FieldErrors = Record<string, string>;
 
-/** First message per top-level field — what a form shows under each input. */
+/** Первое сообщение для каждого поля верхнего уровня — то, что форма показывает под полем. */
 export function toFieldErrors(error: z.ZodError): FieldErrors {
   const fields: FieldErrors = {};
   for (const issue of error.issues) {

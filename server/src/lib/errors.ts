@@ -1,6 +1,6 @@
 import type { ErrorCode, FieldErrors } from '@test-ers/shared';
 
-/** An error that is safe to show to the client as-is. Anything else becomes a 500. */
+/** Ошибка, которую безопасно показать клиенту как есть. Любая другая превращается в 500. */
 export class AppError extends Error {
   readonly status: number;
   readonly code: ErrorCode;

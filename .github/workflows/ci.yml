@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # 24 is the minimum promised in package.json engines, 26 is the version in .nvmrc
+        # 24 — минимальная версия из engines в package.json, 26 — версия из .nvmrc
         node: [24, 26]
     steps:
       - uses: actions/checkout@v5
@@ -27,7 +27,7 @@ jobs:
           cache: npm
 
       - run: npm ci
-      # Static checks don't depend on the runtime version
+      # Статические проверки не зависят от версии Node
       - if: matrix.node == 26
         run: npm run lint -- --max-warnings=0
       - if: matrix.node == 26

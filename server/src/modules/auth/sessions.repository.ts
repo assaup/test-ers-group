@@ -4,7 +4,7 @@ import { asNumber, asString } from '../../db/sqlite';
 
 export type SessionsRepository = ReturnType<typeof createSessionsRepository>;
 
-// Timestamps are compared inside SQLite with datetime('now'), so the format always matches
+// Время сравнивается внутри SQLite через datetime('now'), поэтому формат всегда совпадает
 export function createSessionsRepository(db: Database) {
   const insert = db.prepare(
     "INSERT INTO sessions (user_id, token_hash, expires_at) VALUES (?, ?, datetime('now', ?))",

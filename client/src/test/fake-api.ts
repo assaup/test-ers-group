@@ -15,8 +15,8 @@ interface MockResponse {
 type Route = MockResponse | ((call: ApiCall) => MockResponse | Promise<MockResponse>);
 
 /**
- * Replaces fetch with a table of routes ("GET /api/auth/me" → response).
- * Components are tested against the real API client, only the network is fake.
+ * Подменяет fetch таблицей маршрутов ("GET /api/auth/me" → ответ).
+ * Компоненты тестируются с настоящим API-клиентом, поддельна только сеть.
  */
 export function mockApi(routes: Record<string, Route>) {
   const calls: ApiCall[] = [];

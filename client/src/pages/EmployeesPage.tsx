@@ -21,27 +21,27 @@ const SEARCH_DEBOUNCE_MS = 300;
 const HIGHLIGHT_MS = 2500;
 
 export function EmployeesPage() {
-  // Filters are page state, read from the URL once (?q=…&dept=…) and mirrored back into it,
-  // so they survive reloads and can be shared. The URL is never a second source of truth
+  // Фильтры — состояние страницы: один раз читаются из адреса (?q=…&dept=…) и отражаются в нём,
+  // поэтому переживают перезагрузку и ими можно поделиться. Адрес не становится вторым источником правды
   const [params, setParams] = useSearchParams();
   const [searchInput, setSearchInput] = useState(() => readFilters(params).search);
   const [selectedDepartment, setSelectedDepartment] = useState(
     () => readFilters(params).departmentId,
   );
   const debouncedSearch = useDebouncedValue(searchInput.trim(), SEARCH_DEBOUNCE_MS);
-  // Clearing applies at once: a reset must not fire one more request with the old text
+  // Очистка применяется сразу: сброс не должен отправить ещё один запрос со старым текстом
   const search = searchInput.trim() ? debouncedSearch : '';
 
   const departments = useRemoteData(employeesApi.departments);
-  // A department that no longer exists (an old link, ?dept=999) is dropped once the list is
-  // known; otherwise the page would say "nobody found" while the select shows "all departments"
+  // Несуществующий отдел (старая ссылка, ?dept=999) отбрасывается, как только список отделов
+  // загружен; иначе страница писала бы «Никого не нашли», а в селекте было бы «Все отделы»
   const departmentExists =
     selectedDepartment === undefined ||
     !departments.data ||
     departments.data.some((department) => department.id === selectedDepartment);
   const departmentId = departmentExists ? selectedDepartment : undefined;
 
-  // Mirror the applied filters into the URL; this also removes invalid values from it
+  // Отражаем применённые фильтры в адресе; заодно это убирает из него невалидные значения
   useEffect(() => {
     setParams(filtersToParams({ search, departmentId }), { replace: true });
   }, [search, departmentId, setParams]);
@@ -137,7 +137,7 @@ export function EmployeesPage() {
 
         <section className="employees-page__results" aria-label="Список сотрудников">
           {employees.status === 'error' && isRejectedRequest(employees.error) ? (
-            // The server refused the filters themselves: retrying the same request won't help
+            // Сервер отклонил сами фильтры: повтор того же запроса не поможет
             <EmptyState
               icon="!"
               tone="danger"

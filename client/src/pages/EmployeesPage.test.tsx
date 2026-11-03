@@ -7,7 +7,7 @@ import { renderApp } from '../test/render';
 function rowNames() {
   return within(screen.getByRole('table'))
     .getAllByRole('row')
-    .slice(1) // header
+    .slice(1) // строка заголовков
     .map((row) => within(row).getAllByRole('cell')[0]?.textContent);
 }
 
@@ -89,7 +89,7 @@ describe('EmployeesPage: search and filter', () => {
       expect(rowNames()).toEqual(['Фёдорова Мария Андреевна']);
     });
     expect(screen.getByText('Найдено: 1')).toBeInTheDocument();
-    // Debounced: one request for the whole word, not one per keystroke
+    // С задержкой: один запрос на всё слово, а не на каждое нажатие
     expect(listCalls(calls).map((call) => call.query.get('search'))).toEqual([null, 'федор']);
     expect(screen.getByTestId('location')).toHaveTextContent('/employees?q=федор');
   });
@@ -161,7 +161,7 @@ describe('EmployeesPage: search and filter', () => {
     const select = screen.getByRole('combobox', { name: 'Отдел' });
     await user.selectOptions(select, 'HR');
     await user.selectOptions(select, 'Аналитика');
-    // The newer request (Аналитика) answers first, the outdated one (HR) later
+    // Новый запрос (Аналитика) отвечает первым, устаревший (HR) — позже
     pending['3']?.();
     await screen.findByText('Кузнецов Алексей Игоревич');
     pending['2']?.();
@@ -237,7 +237,7 @@ describe('EmployeesPage: filters from the URL', () => {
 
     await user.click(screen.getByRole('button', { name: 'Сбросить фильтры' }));
     await screen.findByText('Найдено: 5');
-    // Wait past the debounce delay to catch a late request with the old text
+    // Ждём дольше задержки поиска, чтобы поймать запоздалый запрос со старым текстом
     await new Promise((resolve) => setTimeout(resolve, 400));
 
     expect(
@@ -297,7 +297,7 @@ describe('EmployeesPage: adding an employee', () => {
 
   it('shows server-side field errors in the dialog', async () => {
     const { user, dialog } = await openDialog();
-    // A department that disappeared between loading the list and submitting
+    // Отдел, который исчез между загрузкой списка и отправкой формы
     const select = within(dialog).getByRole('combobox', { name: /Отдел/ });
     const ghost = document.createElement('option');
     ghost.value = '999';
@@ -370,7 +370,7 @@ describe('EmployeesPage: dialog edge cases', () => {
 
     const escape = new Event('cancel', { cancelable: true });
     dialog.dispatchEvent(escape);
-    await user.click(dialog); // backdrop
+    await user.click(dialog); // клик по фону
 
     expect(escape.defaultPrevented).toBe(true);
     expect(within(dialog).getByRole('button', { name: 'Отмена' })).toBeDisabled();
@@ -381,7 +381,7 @@ describe('EmployeesPage: dialog edge cases', () => {
   it('ignores a response that arrives after the dialog was closed anyway', async () => {
     const { user, dialog, finish } = await openWithSlowSave();
 
-    // A browser may still force-close a modal (e.g. a repeated Esc)
+    // Браузер всё равно может принудительно закрыть модальное окно (например, повторный Esc)
     dialog.close();
     finish(apiError(500, 'INTERNAL_ERROR'));
     await new Promise((resolve) => setTimeout(resolve, 0));

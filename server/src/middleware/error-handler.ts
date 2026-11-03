@@ -22,7 +22,7 @@ export function errorHandler(error: unknown, _req: Request, res: Response, _next
 function toAppError(error: unknown): AppError | undefined {
   if (error instanceof AppError) return error;
 
-  // express.json() rejects malformed bodies with a body-parser error
+  // express.json() отклоняет некорректное тело ошибкой body-parser
   if (isBodyParserError(error, 'entity.parse.failed')) {
     return new AppError(400, 'VALIDATION_ERROR', 'Некорректный JSON в теле запроса');
   }

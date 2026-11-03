@@ -23,7 +23,7 @@ const SELECT_EMPLOYEE = `
 `;
 
 export function createEmployeesRepository(db: Database) {
-  // NULL parameters switch a filter off, so one prepared statement covers every combination
+  // Параметр NULL выключает фильтр, поэтому один подготовленный запрос покрывает все сочетания
   const selectFiltered = db.prepare(`
     ${SELECT_EMPLOYEE}
     WHERE ($search IS NULL OR e.full_name_search LIKE $search ESCAPE '\\')
@@ -53,7 +53,7 @@ export function createEmployeesRepository(db: Database) {
     findById,
 
     create({ fullName, position, departmentId }: NewEmployee): Employee {
-      // The search column is derived here, so it can never drift from full_name
+      // Колонка для поиска вычисляется здесь, поэтому никогда не разойдётся с full_name
       const row = insert.get(fullName, normalizeForSearch(fullName), position, departmentId);
       const employee = findById(asNumber(row?.id));
       if (!employee) throw new Error('Inserted employee not found');
@@ -62,7 +62,7 @@ export function createEmployeesRepository(db: Database) {
   };
 }
 
-/** `%` and `_` typed by the user must match literally, not as LIKE wildcards. */
+/** Введённые пользователем `%` и `_` ищутся как обычные символы, а не как шаблоны LIKE. */
 export function escapeLike(value: string): string {
   return value.replace(/[\\%_]/g, '\\$&');
 }

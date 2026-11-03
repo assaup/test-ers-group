@@ -4,7 +4,7 @@ import { createContext } from 'react';
 export type AuthState =
   | { status: 'loading' }
   | { status: 'authenticated'; user: User }
-  /** `loggedOut`: the user pressed "Выйти", as opposed to an expired or missing session. */
+  /** `loggedOut`: пользователь сам нажал «Выйти», а не сессия истекла или отсутствовала. */
   | { status: 'anonymous'; loggedOut?: boolean };
 
 export interface AuthContextValue {

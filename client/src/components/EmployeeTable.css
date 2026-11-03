@@ -105,7 +105,7 @@
   }
 }
 
-/* Phones: every row becomes a card (design 06, 360 px) */
+/* Телефоны: каждая строка становится карточкой (макет 06, 360 px) */
 @media (max-width: 639px) {
   .employee-table,
   .employee-table tbody,

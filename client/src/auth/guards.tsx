@@ -6,15 +6,15 @@ interface FromState {
   from?: string;
 }
 
-/** Routes for signed-in users; everyone else goes to /login and comes back after. */
+/** Маршруты для вошедших; остальные уходят на /login и возвращаются после входа. */
 export function RequireAuth() {
   const { state } = useAuth();
   const location = useLocation();
 
   if (state.status === 'loading') return <PageLoader />;
   if (state.status === 'anonymous') {
-    // After an explicit logout the next person to sign in starts fresh, without the
-    // previous user's page and filters; an expired session brings the same user back
+    // После явного выхода следующий вошедший начинает с чистого листа, без страницы
+    // и фильтров прошлого пользователя; после истёкшей сессии тот же пользователь вернётся обратно
     const from: FromState | undefined = state.loggedOut
       ? undefined
       : { from: location.pathname + location.search };
@@ -23,7 +23,7 @@ export function RequireAuth() {
   return <Outlet />;
 }
 
-/** Login and register pages: a signed-in user has nothing to do there. */
+/** Страницы входа и регистрации: вошедшему пользователю там делать нечего. */
 export function GuestOnly() {
   const { state } = useAuth();
   const location = useLocation();

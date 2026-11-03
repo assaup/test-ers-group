@@ -287,7 +287,7 @@ describe('logout', () => {
 
     renderApp('/employees');
 
-    // Any request will do: the client reacts to the 401 itself
+    // Подойдёт любой запрос: клиент сам реагирует на 401
     await screen.findByRole('heading', { name: 'Сотрудники' });
     await apiRequest('/employees').catch(() => undefined);
 

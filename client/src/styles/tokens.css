@@ -1,9 +1,9 @@
-/* Design tokens from Claude Design (design/employees-directory.dc.html, section 01) */
+/* Дизайн-токены из Claude Design (design/employees-directory.dc.html, раздел 01) */
 
 :root {
   color-scheme: light dark;
 
-  /* Colors */
+  /* Цвета */
   --color-bg: #f6f7f9;
   --color-surface: #ffffff;
   --color-surface-2: #f0f2f5;
@@ -32,7 +32,7 @@
   --focus-ring: 0 0 0 3px rgb(47 91 211 / 0.25);
   --focus-ring-danger: 0 0 0 3px rgb(194 54 47 / 0.18);
 
-  /* Department badges: background / text */
+  /* Метки отделов: фон / текст */
   --dept-dev-bg: #e6edfb;
   --dept-dev-fg: #2a4a9a;
   --dept-hr-bg: #f7e7f0;
@@ -44,7 +44,7 @@
   --dept-mkt-bg: #eee8f8;
   --dept-mkt-fg: #5b3b94;
 
-  /* Typography */
+  /* Типографика */
   --font-sans: 'Golos Text', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
   --text-xs: 13px;
@@ -58,7 +58,7 @@
   --weight-medium: 500;
   --weight-semibold: 600;
 
-  /* Spacing, 4px step */
+  /* Отступы, шаг 4px */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -70,19 +70,19 @@
   --space-12: 48px;
   --space-16: 64px;
 
-  /* Radii */
+  /* Радиусы */
   --radius-sm: 6px;
   --radius-md: 8px;
   --radius-lg: 12px;
   --radius-full: 999px;
 
-  /* Shadows */
+  /* Тени */
   --shadow-sm: 0 1px 2px rgb(16 24 40 / 0.06), 0 1px 3px rgb(16 24 40 / 0.08);
   --shadow-md: 0 4px 12px rgb(16 24 40 / 0.08), 0 1px 3px rgb(16 24 40 / 0.06);
   --shadow-lg: 0 20px 48px rgb(16 24 40 / 0.18), 0 4px 12px rgb(16 24 40 / 0.08);
   --shadow-card: 0 1px 2px rgb(16 24 40 / 0.05), 0 8px 24px rgb(16 24 40 / 0.06);
 
-  /* Sizes */
+  /* Размеры */
   --control-h: 40px;
   --control-h-lg: 44px;
   --header-h: 56px;
@@ -91,7 +91,7 @@
   --dialog-w: 480px;
 }
 
-/* Bigger touch targets on phones */
+/* На телефонах элементы крупнее, чтобы легче попадать пальцем */
 @media (max-width: 767px) {
   :root {
     --control-h: 44px;

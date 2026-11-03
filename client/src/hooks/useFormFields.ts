@@ -2,14 +2,14 @@ import type { FieldErrors } from '@test-ers/shared';
 import { useCallback, useEffect, useState, type ChangeEvent } from 'react';
 
 /**
- * Text-field form state: values as strings, one error per field, focus on the first
- * invalid field after a failed submit. Validation itself stays in the shared zod schemas.
+ * Состояние формы из текстовых полей: значения — строки, по одной ошибке на поле, фокус на
+ * первом ошибочном поле после неудачной отправки. Сама валидация — в общих zod-схемах.
  */
 export function useFormFields<Values extends Record<string, string>>(initial: Values) {
   const [values, setValues] = useState(initial);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [focusRequest, setFocusRequest] = useState(0);
-  // Callback ref kept in state: pass it as <form ref={bindForm}>
+  // Callback-ref хранится в состоянии: передавайте его как <form ref={bindForm}>
   const [formElement, bindForm] = useState<HTMLFormElement | null>(null);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export function useFormFields<Values extends Record<string, string>>(initial: Va
 
   const setValue = useCallback((name: keyof Values & string, value: string) => {
     setValues((current) => ({ ...current, [name]: value }));
-    // Editing a field dismisses its error; the rest stay until the next submit
+    // Правка поля убирает его ошибку; остальные остаются до следующей отправки
     setErrors(({ [name]: _removed, ...rest }) => rest);
   }, []);
 
@@ -33,7 +33,7 @@ export function useFormFields<Values extends Record<string, string>>(initial: Va
     setErrors({});
   }, [initial]);
 
-  /** Props for a TextField/SelectField bound to `name`. */
+  /** Пропсы для TextField/SelectField, привязанного к `name`. */
   function field(name: keyof Values & string) {
     return {
       name,

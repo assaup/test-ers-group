@@ -72,7 +72,7 @@
   box-shadow: var(--focus-ring-danger);
 }
 
-/* Native select with a custom chevron */
+/* Нативный select со своей стрелкой */
 .field__control--select {
   padding-right: 36px;
   appearance: none;

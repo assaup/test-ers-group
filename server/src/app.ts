@@ -21,9 +21,9 @@ export interface AppDeps {
   db: Database;
   secureCookies?: boolean;
   sessionTtlSeconds?: number;
-  /** Failed login/register attempts per IP per 15 minutes; `false` disables the limit (tests). */
+  /** Неудачных попыток входа/регистрации с IP за 15 минут; `false` отключает лимит (в тестах). */
   authRateLimit?: number | false;
-  /** Built client to serve alongside the API; omitted in development (Vite serves it). */
+  /** Собранный клиент, который отдаётся вместе с API; в разработке не задаётся (его отдаёт Vite). */
   clientDir?: string | undefined;
 }
 
@@ -48,8 +48,8 @@ export function createApp({
 
   const app = express();
 
-  // HSTS and upgrade-insecure-requests only make sense behind HTTPS: over plain HTTP the
-  // browser would rewrite script and style URLs to https:// and the page stays blank
+  // HSTS и upgrade-insecure-requests имеют смысл только за HTTPS: по обычному HTTP браузер
+  // переписал бы адреса скриптов и стилей на https://, и страница осталась бы белой
   app.use(
     helmet({
       contentSecurityPolicy: {
@@ -97,7 +97,7 @@ function createAuthRateLimit(limit: number | false): RequestHandler {
   return rateLimit({
     windowMs: 15 * 60 * 1000,
     limit,
-    // Only failed attempts count: someone logging in and out a lot is not a brute force
+    // Считаются только неудачные попытки: частые входы и выходы — это не перебор паролей
     skipSuccessfulRequests: true,
     standardHeaders: 'draft-8',
     legacyHeaders: false,

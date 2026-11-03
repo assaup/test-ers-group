@@ -3,7 +3,7 @@ export interface Migration {
   sql: string;
 }
 
-// Append-only: never edit a migration that has shipped, add a new one instead
+// Только дописываем: выпущенную миграцию не меняем, а добавляем новую
 export const migrations: readonly Migration[] = [
   {
     id: '001_initial',

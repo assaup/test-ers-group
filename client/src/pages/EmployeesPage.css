@@ -25,7 +25,7 @@
   max-width: 360px;
 }
 
-/* Hide the browser's own clear button in search inputs, the design has none */
+/* Прячем встроенную кнопку очистки в поле поиска: в макете её нет */
 .employees-page__search input::-webkit-search-cancel-button {
   display: none;
 }
@@ -80,7 +80,7 @@
   }
 }
 
-/* Phones: filters stack, the list turns into cards (design 06, 360 px) */
+/* Телефоны: фильтры в столбик, список превращается в карточки (макет 06, 360 px) */
 @media (max-width: 639px) {
   .employees-page {
     gap: var(--space-3);

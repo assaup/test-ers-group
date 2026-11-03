@@ -36,21 +36,21 @@ export function AddEmployeeDialog({
   onCreated,
 }: AddEmployeeDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
-  // Bumped on every submit and every close: a response for an older value is ignored,
-  // so a request that finishes after the dialog was closed can't touch the next draft
+  // Увеличивается при каждой отправке и каждом закрытии: ответ для старого значения игнорируется,
+  // поэтому запрос, завершившийся после закрытия диалога, не затронет следующий черновик
   const requestIdRef = useRef(0);
   const { values, bindForm, field, showErrors, reset } = useFormFields(INITIAL);
   const [formError, setFormError] = useState<string>();
   const [submitting, setSubmitting] = useState(false);
 
-  // <dialog> gives focus trapping, Esc and the backdrop for free; React only mirrors `open`
+  // <dialog> сам удерживает фокус, закрывается по Esc и рисует фон; React лишь отражает `open`
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
     if (open && !dialog.open) {
       dialog.showModal();
-      // showModal() focuses the first focusable element (the × button); React's autoFocus
-      // doesn't help because it sets no DOM attribute for the dialog to find
+      // showModal() фокусирует первый фокусируемый элемент (кнопку «×»); autoFocus из React
+      // не помогает: он не ставит DOM-атрибут, который диалог мог бы найти
       dialog.querySelector('input')?.focus();
     }
     if (!open && dialog.open) dialog.close();
@@ -107,11 +107,11 @@ export function AddEmployeeDialog({
       aria-labelledby="add-employee-title"
       onClose={handleClosed}
       onCancel={(event) => {
-        // Esc while saving: keep the dialog so the result (or the error) has somewhere to go
+        // Esc во время сохранения: диалог остаётся, чтобы результату (или ошибке) было куда прийти
         if (submitting) event.preventDefault();
       }}
       onClick={(event) => {
-        // A click on the backdrop lands on the <dialog> element itself
+        // Клик по фону приходится на сам элемент <dialog>
         if (event.target === event.currentTarget) requestClose();
       }}
     >

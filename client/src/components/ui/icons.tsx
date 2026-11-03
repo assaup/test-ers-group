@@ -1,4 +1,4 @@
-// Icons from the design, drawn with currentColor so they follow the theme
+// Иконки из макета, нарисованы через currentColor, чтобы следовать теме
 
 export function SearchIcon() {
   return (

@@ -6,13 +6,13 @@ import { AuthProvider } from '../auth/AuthProvider';
 
 function CurrentLocation() {
   const location = useLocation();
-  // A plain div: <output> has an implicit role="status" and would clash with toasts
+  // Обычный div: у <output> неявная роль status, и он конфликтовал бы с уведомлениями
   return (
     <div data-testid="location">{decodeURIComponent(location.pathname + location.search)}</div>
   );
 }
 
-/** The whole app (routing + auth) at a given URL, as the user would see it. */
+/** Всё приложение (роутинг + авторизация) по заданному адресу, как его видит пользователь. */
 export function renderApp(url = '/') {
   const user = userEvent.setup();
   const result = render(

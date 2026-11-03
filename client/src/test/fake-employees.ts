@@ -30,7 +30,7 @@ export const SEED: Employee[] = [
   { id: 5, fullName: 'Фёдорова Мария Андреевна', position: 'Бухгалтер', department: dept(4) },
 ];
 
-/** A tiny in-memory imitation of the employees API, with the same search rules. */
+/** Маленькая имитация API сотрудников в памяти с теми же правилами поиска. */
 export function fakeEmployeesBackend(initial: Employee[] = SEED) {
   const employees = [...initial];
 

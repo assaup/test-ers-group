@@ -14,9 +14,9 @@ interface Settled<T> {
 export type RemoteStatus = 'loading' | 'success' | 'error';
 
 /**
- * Runs `load` whenever it changes (pass a useCallback) and on reload().
- * A newer request aborts the previous one, so a slow stale response can never
- * overwrite a fresh one. While reloading, the last data stays available.
+ * Вызывает `load` при каждом его изменении (передавайте useCallback) и по reload().
+ * Новый запрос отменяет предыдущий, поэтому медленный устаревший ответ никогда
+ * не перезапишет свежий. Во время перезагрузки последние данные остаются доступны.
  */
 export function useRemoteData<T>(load: Loader<T>) {
   const [attempt, setAttempt] = useState(0);
@@ -27,7 +27,7 @@ export function useRemoteData<T>(load: Loader<T>) {
     const controller = new AbortController();
     load(controller.signal).then(
       (data) => {
-        // A response can still arrive after abort(); it belongs to an outdated request
+        // Ответ может прийти и после abort(); он относится к устаревшему запросу
         if (controller.signal.aborted) return;
         setSettled({ load, attempt, ok: true, data, error: undefined });
         setLastData(data);
@@ -42,7 +42,7 @@ export function useRemoteData<T>(load: Loader<T>) {
     };
   }, [load, attempt]);
 
-  // "Loading" is derived rather than stored: the settled result belongs to an older request
+  // «Загрузка» вычисляется, а не хранится: завершённый результат относится к более старому запросу
   const isCurrent = settled?.load === load && settled.attempt === attempt;
   const status: RemoteStatus = !isCurrent ? 'loading' : settled.ok ? 'success' : 'error';
 
@@ -53,7 +53,7 @@ export function useRemoteData<T>(load: Loader<T>) {
   return {
     status,
     data: isCurrent && settled.ok ? settled.data : lastData,
-    /** The failure of the current request, when status is "error". */
+    /** Ошибка текущего запроса, когда status равен "error". */
     error: isCurrent ? settled.error : undefined,
     reload,
   };

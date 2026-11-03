@@ -8,9 +8,9 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-// jsdom doesn't implement modal dialogs; emulate just enough for <dialog> components,
-// including the browser's focusing steps: focus moves to the first [autofocus] element in the
-// DOM or else to the first focusable one (React's autoFocus prop sets no DOM attribute)
+// jsdom не умеет модальные диалоги; эмулируем ровно столько, сколько нужно компонентам с <dialog>,
+// включая то, как браузер ставит фокус: на первый элемент с [autofocus] в DOM,
+// а иначе на первый фокусируемый (проп autoFocus из React DOM-атрибут не ставит)
 if (typeof HTMLDialogElement !== 'undefined' && !('showModal' in HTMLDialogElement.prototype)) {
   Object.assign(HTMLDialogElement.prototype, {
     showModal(this: HTMLDialogElement) {

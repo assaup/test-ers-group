@@ -16,16 +16,16 @@ export const DEMO_EMPLOYEES = [
   { fullName: 'Фёдорова Мария Андреевна', position: 'Бухгалтер', department: 'Финансы' },
 ];
 
-// Published in the README and on the login screen — this is a demo account, not a secret
+// Указан в README и на странице входа: это демо-аккаунт, а не секрет
 export const DEMO_USER = { email: 'demo@example.com', password: 'demo12345' };
 
 /**
- * Idempotent: departments are upserted, demo employees are added only into an empty table,
- * so restarting the server never duplicates data or overwrites what users added.
+ * Идемпотентен: отделы добавляются без дублей, демо-сотрудники — только в пустую таблицу,
+ * поэтому перезапуск сервера не дублирует данные и не затирает добавленное пользователями.
  */
 export async function seedDatabase(db: Database) {
   const demoUserExists = db.prepare('SELECT 1 FROM users WHERE email = ?').get(DEMO_USER.email);
-  // Hash before the transaction: scrypt is async and the transaction must stay synchronous
+  // Хешируем до транзакции: scrypt асинхронный, а транзакция должна оставаться синхронной
   const demoPasswordHash = demoUserExists ? undefined : await hashPassword(DEMO_USER.password);
 
   return transaction(db, () => {

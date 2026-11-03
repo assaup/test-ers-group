@@ -18,7 +18,7 @@ const definedTokens = new Set(
   [...readFileSync(tokensPath, 'utf8').matchAll(/(--[\w-]+)\s*:/g)].map((match) => match[1]),
 );
 
-// Guards the convention "colors, spacing and radii only through tokens" (agents/conventions.md)
+// Охраняет правило «цвета, отступы и радиусы — только через токены» (agents/conventions.md)
 describe('design tokens', () => {
   const components = cssFiles(srcDir).filter((path) => path !== tokensPath);
 

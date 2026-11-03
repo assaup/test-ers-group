@@ -42,7 +42,7 @@
   color: var(--color-text-2);
 }
 
-/* Shared by the login and register forms */
+/* Общее для форм входа и регистрации */
 .auth-form {
   display: flex;
   flex-direction: column;

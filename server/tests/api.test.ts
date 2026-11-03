@@ -146,7 +146,7 @@ describe('server restart', () => {
 
     const after = await startServer(path);
 
-    // The same cookie still works: sessions live in the database, not in memory
+    // Та же cookie по-прежнему работает: сессии хранятся в базе, а не в памяти
     const list = await request(after.app).get('/api/employees').set('Cookie', cookie).expect(200);
     expect(list.body.items).toHaveLength(6);
 

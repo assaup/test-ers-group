@@ -19,8 +19,8 @@ export interface AuthResult {
 export type AuthService = ReturnType<typeof createAuthService>;
 
 export function createAuthService({ users, sessions, sessionTtlSeconds }: AuthServiceDeps) {
-  // Verifying against a real hash for unknown emails keeps response time
-  // from revealing which emails are registered
+  // Для неизвестного email всё равно проверяем пароль по настоящему хешу, чтобы время ответа
+  // не выдавало, какие email зарегистрированы
   const dummyHash = hashPassword('timing-equalizer');
 
   function startSession(user: User): AuthResult {

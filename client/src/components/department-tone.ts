@@ -1,7 +1,7 @@
 export const DEPARTMENT_TONES = ['dev', 'hr', 'an', 'fin', 'mkt'] as const;
 export type DepartmentTone = (typeof DEPARTMENT_TONES)[number];
 
-// Colors from the design for the known departments
+// Цвета из макета для известных отделов
 const KNOWN: Record<string, DepartmentTone> = {
   Разработка: 'dev',
   HR: 'hr',
@@ -10,7 +10,7 @@ const KNOWN: Record<string, DepartmentTone> = {
   Маркетинг: 'mkt',
 };
 
-/** Known departments keep their design color; any other gets a stable one from its name. */
+/** Известные отделы получают цвет из макета, любой другой — постоянный цвет по названию. */
 export function departmentTone(name: string): DepartmentTone {
   const known = KNOWN[name];
   if (known) return known;
