@@ -1,0 +1,278 @@
+import { screen, waitFor, within } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+import { apiError, mockApi, signedIn, type ApiCall } from '../test/fake-api';
+import { DEPARTMENTS, fakeEmployeesBackend } from '../test/fake-employees';
+import { renderApp } from '../test/render';
+
+function rowNames() {
+  return within(screen.getByRole('table'))
+    .getAllByRole('row')
+    .slice(1) // header
+    .map((row) => within(row).getAllByRole('cell')[0]?.textContent);
+}
+
+function listCalls(calls: ApiCall[]) {
+  return calls.filter((call) => call.method === 'GET' && call.path === '/api/employees');
+}
+
+describe('EmployeesPage: list', () => {
+  it('shows employees with their position and department', async () => {
+    mockApi(fakeEmployeesBackend().routes);
+
+    renderApp('/employees');
+
+    expect(await screen.findByText('Иванова Анна Сергеевна')).toBeInTheDocument();
+    expect(screen.getByText('Найдено: 5')).toBeInTheDocument();
+    const row = screen.getByText('Петров Дмитрий Олегович').closest('tr');
+    expect(row).toHaveTextContent('Frontend-разработчик');
+    expect(row).toHaveTextContent('Разработка');
+  });
+
+  it('shows a skeleton until the first response arrives', async () => {
+    let respond: (() => void) | undefined;
+    const { routes } = fakeEmployeesBackend();
+    mockApi({
+      ...routes,
+      'GET /api/employees': (call) =>
+        new Promise((resolve) => {
+          respond = () => {
+            resolve(routes['GET /api/employees'](call));
+          };
+        }),
+    });
+
+    renderApp('/employees');
+
+    expect(await screen.findByRole('table')).toHaveAttribute('aria-busy', 'true');
+    expect(screen.queryByText('Иванова Анна Сергеевна')).not.toBeInTheDocument();
+    respond?.();
+    expect(await screen.findByText('Иванова Анна Сергеевна')).toBeInTheDocument();
+  });
+
+  it('offers a retry when loading fails', async () => {
+    const { routes } = fakeEmployeesBackend();
+    let failures = 1;
+    mockApi({
+      ...routes,
+      'GET /api/employees': (call) =>
+        failures-- > 0 ? apiError(500, 'INTERNAL_ERROR') : routes['GET /api/employees'](call),
+    });
+    const { user } = renderApp('/employees');
+
+    expect(await screen.findByText('Не удалось загрузить список')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Повторить' }));
+
+    expect(await screen.findByText('Иванова Анна Сергеевна')).toBeInTheDocument();
+  });
+
+  it('invites to add the first employee when the directory is empty', async () => {
+    mockApi(fakeEmployeesBackend([]).routes);
+    const { user } = renderApp('/employees');
+
+    expect(await screen.findByText('Сотрудников пока нет')).toBeInTheDocument();
+    const results = screen.getByRole('region', { name: 'Список сотрудников' });
+    await user.click(within(results).getByRole('button', { name: 'Добавить сотрудника' }));
+
+    expect(screen.getByRole('dialog', { name: 'Новый сотрудник' })).toBeVisible();
+  });
+});
+
+describe('EmployeesPage: search and filter', () => {
+  it('searches by full name after the user stops typing', async () => {
+    const { calls } = mockApi(fakeEmployeesBackend().routes);
+    const { user } = renderApp('/employees');
+    await screen.findByText('Найдено: 5');
+
+    await user.type(screen.getByRole('searchbox', { name: 'Поиск по ФИО' }), 'федор');
+
+    await waitFor(() => {
+      expect(rowNames()).toEqual(['Фёдорова Мария Андреевна']);
+    });
+    expect(screen.getByText('Найдено: 1')).toBeInTheDocument();
+    // Debounced: one request for the whole word, not one per keystroke
+    expect(listCalls(calls).map((call) => call.query.get('search'))).toEqual([null, 'федор']);
+    expect(screen.getByTestId('location')).toHaveTextContent('/employees?q=федор');
+  });
+
+  it('filters by department and keeps the filter in the URL', async () => {
+    const { calls } = mockApi(fakeEmployeesBackend().routes);
+    const { user } = renderApp('/employees');
+    await screen.findByText('Найдено: 5');
+
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Отдел' }), 'Разработка');
+
+    await waitFor(() => {
+      expect(rowNames()).toEqual(['Иванова Анна Сергеевна', 'Петров Дмитрий Олегович']);
+    });
+    expect(listCalls(calls).at(-1)?.query.get('departmentId')).toBe('1');
+    expect(screen.getByTestId('location')).toHaveTextContent('/employees?dept=1');
+  });
+
+  it('restores search and filter from the URL', async () => {
+    const { calls } = mockApi(fakeEmployeesBackend().routes);
+
+    renderApp('/employees?q=петр&dept=1');
+
+    await waitFor(() => {
+      expect(rowNames()).toEqual(['Петров Дмитрий Олегович']);
+    });
+    expect(screen.getByRole('searchbox', { name: 'Поиск по ФИО' })).toHaveValue('петр');
+    await waitFor(() => {
+      expect(screen.getByRole('combobox', { name: 'Отдел' })).toHaveValue('1');
+    });
+    expect(listCalls(calls)[0]?.query.toString()).toBe(
+      new URLSearchParams({ search: 'петр', departmentId: '1' }).toString(),
+    );
+  });
+
+  it('says nobody was found and resets the filters', async () => {
+    mockApi(fakeEmployeesBackend().routes);
+    const { user } = renderApp('/employees?q=сидоров&dept=4');
+
+    expect(await screen.findByText('Никого не нашли')).toBeInTheDocument();
+    expect(screen.getByText('Найдено: 0')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Сбросить фильтры' }));
+
+    expect(await screen.findByText('Найдено: 5')).toBeInTheDocument();
+    expect(screen.getByRole('searchbox', { name: 'Поиск по ФИО' })).toHaveValue('');
+    expect(screen.getByRole('combobox', { name: 'Отдел' })).toHaveValue('');
+    expect(screen.getByTestId('location')).toHaveTextContent(/^\/employees$/);
+  });
+
+  it('never lets a slow outdated response overwrite a newer one', async () => {
+    const { routes } = fakeEmployeesBackend();
+    const pending: Record<string, () => void> = {};
+    mockApi({
+      ...routes,
+      'GET /api/employees': (call) =>
+        new Promise((resolve) => {
+          pending[call.query.get('departmentId') ?? 'all'] = () => {
+            resolve(routes['GET /api/employees'](call));
+          };
+        }),
+    });
+    const { user } = renderApp('/employees');
+    await waitFor(() => {
+      expect(pending.all).toBeDefined();
+    });
+    pending.all?.();
+    await screen.findByText('Найдено: 5');
+
+    const select = screen.getByRole('combobox', { name: 'Отдел' });
+    await user.selectOptions(select, 'HR');
+    await user.selectOptions(select, 'Аналитика');
+    // The newer request (Аналитика) answers first, the outdated one (HR) later
+    pending['3']?.();
+    await screen.findByText('Кузнецов Алексей Игоревич');
+    pending['2']?.();
+
+    await waitFor(() => {
+      expect(rowNames()).toEqual(['Кузнецов Алексей Игоревич']);
+    });
+  });
+});
+
+describe('EmployeesPage: adding an employee', () => {
+  async function openDialog() {
+    const backend = fakeEmployeesBackend();
+    const api = mockApi(backend.routes);
+    const app = renderApp('/employees');
+    await screen.findByText('Найдено: 5');
+    await app.user.click(screen.getByRole('button', { name: 'Добавить сотрудника' }));
+    const dialog = screen.getByRole('dialog', { name: 'Новый сотрудник' });
+    return { ...app, ...api, backend, dialog };
+  }
+
+  it('requires every field and sends nothing until they are filled', async () => {
+    const { user, dialog, calls } = await openDialog();
+
+    await user.click(within(dialog).getByRole('button', { name: 'Добавить' }));
+
+    expect(within(dialog).getByLabelText(/ФИО/)).toHaveAccessibleDescription('Укажите ФИО');
+    expect(within(dialog).getByLabelText(/Должность/)).toHaveAccessibleDescription(
+      'Укажите должность',
+    );
+    expect(within(dialog).getByRole('combobox', { name: /Отдел/ })).toHaveAccessibleDescription(
+      'Выберите отдел',
+    );
+    expect(within(dialog).getByLabelText(/ФИО/)).toHaveFocus();
+    expect(calls.some((call) => call.method === 'POST')).toBe(false);
+  });
+
+  it('adds the employee, closes the dialog, confirms and highlights the new row', async () => {
+    const { user, dialog, calls } = await openDialog();
+
+    await user.type(within(dialog).getByLabelText(/ФИО/), '  Соколов   Игорь Павлович ');
+    await user.type(within(dialog).getByLabelText(/Должность/), 'Дизайнер');
+    await user.selectOptions(within(dialog).getByRole('combobox', { name: /Отдел/ }), 'Маркетинг');
+    await user.click(within(dialog).getByRole('button', { name: 'Добавить' }));
+
+    expect(await screen.findByRole('status')).toHaveTextContent('Сотрудник добавлен');
+    expect(dialog).not.toBeVisible();
+    expect(calls.find((call) => call.method === 'POST')?.body).toEqual({
+      fullName: 'Соколов Игорь Павлович',
+      position: 'Дизайнер',
+      departmentId: 5,
+    });
+    const newRow = (await screen.findByText('Соколов Игорь Павлович')).closest('tr');
+    expect(newRow).toHaveClass('employee-table__row--new');
+    expect(screen.getByText('Найдено: 6')).toBeInTheDocument();
+  });
+
+  it('shows server-side field errors in the dialog', async () => {
+    const { user, dialog } = await openDialog();
+    // A department that disappeared between loading the list and submitting
+    const select = within(dialog).getByRole('combobox', { name: /Отдел/ });
+    const ghost = document.createElement('option');
+    ghost.value = '999';
+    ghost.textContent = 'Удалённый отдел';
+    select.append(ghost);
+
+    await user.type(within(dialog).getByLabelText(/ФИО/), 'Новый Сотрудник');
+    await user.type(within(dialog).getByLabelText(/Должность/), 'Стажёр');
+    await user.selectOptions(select, '999');
+    await user.click(within(dialog).getByRole('button', { name: 'Добавить' }));
+
+    await waitFor(() => {
+      expect(select).toHaveAccessibleDescription('Такого отдела нет');
+    });
+    expect(dialog).toBeVisible();
+  });
+
+  it('discards the draft on cancel', async () => {
+    const { user, dialog } = await openDialog();
+    await user.type(within(dialog).getByLabelText(/ФИО/), 'Черновик');
+
+    await user.click(within(dialog).getByRole('button', { name: 'Отмена' }));
+    expect(dialog).not.toBeVisible();
+    await user.click(screen.getByRole('button', { name: 'Добавить сотрудника' }));
+
+    expect(within(dialog).getByLabelText(/ФИО/)).toHaveValue('');
+  });
+
+  it('lists every department in the dialog', async () => {
+    const { dialog } = await openDialog();
+
+    const options = within(within(dialog).getByRole('combobox', { name: /Отдел/ })).getAllByRole(
+      'option',
+    );
+    expect(options.map((option) => option.textContent)).toEqual([
+      'Выберите отдел',
+      ...DEPARTMENTS.map((d) => d.name),
+    ]);
+  });
+});
+
+describe('EmployeesPage: session', () => {
+  it('returns to the login page when the session expires', async () => {
+    mockApi({
+      'GET /api/auth/me': signedIn,
+      'GET /api/departments': apiError(401, 'UNAUTHORIZED'),
+      'GET /api/employees': apiError(401, 'UNAUTHORIZED'),
+    });
+
+    renderApp('/employees');
+
+    expect(await screen.findByRole('heading', { name: 'Вход' })).toBeInTheDocument();
+  });
+});

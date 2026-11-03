@@ -6,7 +6,10 @@ import { AuthProvider } from '../auth/AuthProvider';
 
 function CurrentLocation() {
   const location = useLocation();
-  return <output data-testid="location">{location.pathname + location.search}</output>;
+  // A plain div: <output> has an implicit role="status" and would clash with toasts
+  return (
+    <div data-testid="location">{decodeURIComponent(location.pathname + location.search)}</div>
+  );
 }
 
 /** The whole app (routing + auth) at a given URL, as the user would see it. */

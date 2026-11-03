@@ -1,0 +1,35 @@
+.dept-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+}
+
+.dept-badge--dev {
+  background: var(--dept-dev-bg);
+  color: var(--dept-dev-fg);
+}
+
+.dept-badge--hr {
+  background: var(--dept-hr-bg);
+  color: var(--dept-hr-fg);
+}
+
+.dept-badge--an {
+  background: var(--dept-an-bg);
+  color: var(--dept-an-fg);
+}
+
+.dept-badge--fin {
+  background: var(--dept-fin-bg);
+  color: var(--dept-fin-fg);
+}
+
+.dept-badge--mkt {
+  background: var(--dept-mkt-bg);
+  color: var(--dept-mkt-fg);
+}

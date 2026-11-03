@@ -14,6 +14,49 @@
   line-height: 1.2;
 }
 
+.employees-page__toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.employees-page__search {
+  flex: 1;
+  max-width: 360px;
+}
+
+/* Hide the browser's own clear button in search inputs, the design has none */
+.employees-page__search input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.employees-page__department {
+  width: 200px;
+}
+
+.employees-page__add {
+  margin-left: auto;
+}
+
+.employees-page__count {
+  display: flex;
+  align-items: center;
+  min-height: 20px;
+  font-size: var(--text-sm);
+  color: var(--color-text-2);
+}
+
+.employees-page__count-skeleton {
+  width: 90px;
+}
+
+.employees-page__results {
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
 @media (max-width: 767px) {
   .employees-page {
     gap: var(--space-4);
@@ -23,11 +66,52 @@
   .employees-page__title {
     font-size: var(--text-2xl);
   }
+
+  .employees-page__search {
+    max-width: none;
+  }
+
+  .employees-page__department {
+    width: 170px;
+  }
+
+  .employees-page__add {
+    margin-left: 0;
+  }
 }
 
-@media (max-width: 479px) {
+/* Phones: filters stack, the list turns into cards (design 06, 360 px) */
+@media (max-width: 639px) {
   .employees-page {
     gap: var(--space-3);
     padding: var(--space-5) var(--space-4);
+  }
+
+  .employees-page__title {
+    margin-bottom: var(--space-1);
+    font-size: 22px;
+  }
+
+  .employees-page__toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .employees-page__department {
+    width: auto;
+  }
+
+  .employees-page__add {
+    width: 100%;
+  }
+
+  .employees-page__count {
+    margin-top: var(--space-1);
+  }
+
+  .employees-page__results:has(.employee-table) {
+    overflow: visible;
+    border: 0;
+    background: transparent;
   }
 }

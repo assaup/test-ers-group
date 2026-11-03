@@ -79,6 +79,14 @@
   cursor: pointer;
 }
 
+.field__control--placeholder {
+  color: var(--color-text-2);
+}
+
+.field__control--select option {
+  color: var(--color-text);
+}
+
 .field__chevron {
   position: absolute;
   top: 50%;
