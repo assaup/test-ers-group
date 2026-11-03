@@ -1,0 +1,105 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: var(--control-h);
+  padding: 0 var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+}
+
+.btn--sm {
+  height: 32px;
+  padding: 0 var(--space-3);
+  font-size: var(--text-sm);
+}
+
+.btn--lg {
+  height: var(--control-h-lg);
+}
+
+.btn--block {
+  display: flex;
+  width: 100%;
+}
+
+/* Primary */
+.btn--primary {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.btn--primary:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+
+.btn--primary:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--color-surface),
+    0 0 0 4px var(--color-accent);
+}
+
+.btn--primary:disabled:not(.btn--loading) {
+  background: var(--color-disabled);
+  color: var(--color-text-disabled);
+}
+
+/* Secondary */
+.btn--secondary {
+  border-color: var(--color-border-strong);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.btn--secondary:hover:not(:disabled) {
+  background: var(--color-surface-2);
+}
+
+.btn--secondary:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--color-surface),
+    0 0 0 4px var(--color-accent);
+}
+
+.btn--secondary:disabled:not(.btn--loading) {
+  border-color: var(--color-disabled);
+  background: var(--color-surface-3);
+  color: var(--color-text-disabled);
+}
+
+/* Text */
+.btn--text {
+  padding: 0 var(--space-3);
+  background: transparent;
+  color: var(--color-accent);
+}
+
+.btn--text:hover:not(:disabled) {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-hover);
+}
+
+.btn--text:focus-visible {
+  box-shadow: 0 0 0 2px var(--color-accent);
+}
+
+.btn--text:disabled:not(.btn--loading) {
+  color: var(--color-text-disabled);
+}
+
+.btn--loading {
+  opacity: 0.85;
+  cursor: progress;
+}

@@ -42,12 +42,14 @@ export default defineConfig([
 
   {
     // supertest's res.body and expect.any() are typed `any` by design
-    files: ['**/tests/**/*.ts', '**/*.test.{ts,tsx}'],
+    files: ['**/tests/**/*.ts', '**/*.test.{ts,tsx}', 'client/src/test/**'],
     rules: {
       '@typescript-eslint/no-unsafe-argument': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-call': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
+      // Test helpers are never hot-reloaded
+      'react-refresh/only-export-components': 'off',
     },
   },
 

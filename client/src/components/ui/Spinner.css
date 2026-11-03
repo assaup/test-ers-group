@@ -1,0 +1,16 @@
+.spinner {
+  display: inline-block;
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentcolor;
+  border-top-color: transparent;
+  border-radius: var(--radius-full);
+  animation: spinner-rotate 0.7s linear infinite;
+}
+
+@keyframes spinner-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}

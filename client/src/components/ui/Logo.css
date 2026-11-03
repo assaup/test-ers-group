@@ -1,0 +1,22 @@
+.logo {
+  display: grid;
+  flex: none;
+  place-items: center;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font-weight: var(--weight-semibold);
+}
+
+.logo--sm {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-md);
+  font-size: var(--text-xs);
+}
+
+.logo--md {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  font-size: 16px;
+}

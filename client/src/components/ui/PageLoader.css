@@ -1,0 +1,11 @@
+.page-loader {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  color: var(--color-accent);
+}
+
+.page-loader__spinner {
+  width: 24px;
+  height: 24px;
+}
