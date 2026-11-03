@@ -1,3 +1,5 @@
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 import { createApp } from './app';
 import { config } from './config';
 import { openDatabase } from './db/connection';
@@ -19,8 +21,16 @@ if (demoUserAdded) {
   console.info(`Seeded demo user ${DEMO_USER.email}`);
 }
 
-const server = createApp({ db }).listen(config.port, () => {
+const clientBuilt = existsSync(join(config.clientDir, 'index.html'));
+const clientDir = clientBuilt ? config.clientDir : undefined;
+
+const server = createApp({ db, clientDir }).listen(config.port, () => {
   console.info(`Server listening on http://localhost:${config.port}`);
+  console.info(
+    clientBuilt
+      ? `Serving the built client at http://localhost:${config.port}`
+      : 'Client is not built: API only (use `npm run dev` or `npm run build` first)',
+  );
 });
 
 function shutdown() {

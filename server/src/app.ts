@@ -6,6 +6,7 @@ import type { Database } from './db/connection';
 import { AppError } from './lib/errors';
 import { errorHandler, notFoundHandler } from './middleware/error-handler';
 import { createRequireAuth } from './middleware/require-auth';
+import { serveClient } from './middleware/serve-client';
 import { createAuthRouter } from './modules/auth/auth.router';
 import { createAuthService } from './modules/auth/auth.service';
 import { createSessionsRepository } from './modules/auth/sessions.repository';
@@ -22,6 +23,8 @@ export interface AppDeps {
   sessionTtlSeconds?: number;
   /** Requests per IP per 15 minutes on login/register; `false` disables the limit (tests). */
   authRateLimit?: number | false;
+  /** Built client to serve alongside the API; omitted in development (Vite serves it). */
+  clientDir?: string | undefined;
 }
 
 export function createApp({
@@ -29,6 +32,7 @@ export function createApp({
   secureCookies = config.secureCookies,
   sessionTtlSeconds = config.sessionTtlSeconds,
   authRateLimit = config.authRateLimit,
+  clientDir,
 }: AppDeps) {
   const authService = createAuthService({
     users: createUsersRepository(db),
@@ -67,6 +71,9 @@ export function createApp({
   app.use('/api/employees', requireAuth, createEmployeesRouter(employeesService));
 
   app.use('/api', notFoundHandler);
+  if (clientDir) {
+    app.use(serveClient(clientDir));
+  }
   app.use(errorHandler);
 
   return app;

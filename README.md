@@ -21,6 +21,15 @@ npm run dev
 Откройте http://localhost:5173. API работает на http://localhost:3000, клиент ходит к нему через
 прокси Vite.
 
+Production-режим — сервер отдаёт и API, и собранный клиент с одного порта:
+
+```bash
+npm run build
+npm start
+```
+
+Откройте http://localhost:3000.
+
 При первом запуске создаётся база `server/data/app.db` с 5 демо-сотрудниками и демо-аккаунтом:
 
 | Email              | Пароль      |
@@ -35,7 +44,8 @@ npm run dev
 | ------------------- | ----------------------------------- |
 | `npm run dev`       | сервер и клиент в режиме разработки |
 | `npm run build`     | production-сборка обоих пакетов     |
-| `npm start`         | запуск собранного сервера           |
+| `npm start`         | собранный сервер + клиент на :3000  |
+| `npm run smoke`     | запуск сборки и проверка, что живая |
 | `npm run lint`      | ESLint с проверкой типов            |
 | `npm run format`    | Prettier                            |
 | `npm run typecheck` | `tsc` по всем пакетам               |
@@ -47,6 +57,7 @@ npm run dev
 client/    React-приложение (Vite)
 server/    Express API + SQLite
 shared/    zod-схемы и типы, общие для клиента и сервера
+design/    макет из Claude Design
 agents/    архитектура, roadmap, соглашения, ADR, дизайн-бриф
 ```
 
@@ -62,7 +73,9 @@ agents/    архитектура, roadmap, соглашения, ADR, диза�
 - TypeScript в strict-режиме, ESLint с правилами `strictTypeChecked`, Prettier.
 - Pre-commit хук (Husky + lint-staged) проверяет изменённые файлы, commitlint следит за форматом
   [Conventional Commits](https://www.conventionalcommits.org/).
-- GitHub Actions на каждый push: lint, format, typecheck, build.
+- Тесты (Vitest): сервер — supertest на настоящем SQLite в памяти, клиент — Testing Library на
+  всём приложении с подменой только `fetch`.
+- GitHub Actions на каждый push: lint, format, typecheck, тесты, сборка, смоук-тест сборки.
 
 ## Использование ИИ
 
