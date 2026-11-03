@@ -89,13 +89,13 @@ describe('persistence', () => {
     dir = undefined;
   });
 
-  it('keeps data in the database file across restarts', () => {
+  it('keeps data in the database file across restarts', async () => {
     dir = mkdtempSync(join(tmpdir(), 'test-ers-'));
     const path = join(dir, 'nested', 'app.db');
 
     const first = openDatabase(path);
     runMigrations(first);
-    seedDatabase(first);
+    await seedDatabase(first);
     first
       .prepare(
         `INSERT INTO employees (full_name, full_name_search, position, department_id)
@@ -106,7 +106,7 @@ describe('persistence', () => {
 
     const second = openDatabase(path);
     expect(runMigrations(second)).toEqual([]);
-    expect(seedDatabase(second)).toEqual({ employeesAdded: 0 });
+    expect(await seedDatabase(second)).toEqual({ employeesAdded: 0, demoUserAdded: false });
     expect(second.prepare('SELECT COUNT(*) AS count FROM employees').get()?.count).toBe(6);
     second.close();
   });

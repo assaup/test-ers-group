@@ -95,7 +95,8 @@ employees (
 - Регистрация сразу логинит пользователя.
 - Неверный email и неверный пароль дают одинаковый ответ `INVALID_CREDENTIALS`; при несуществующем
   email всё равно выполняется хеширование, чтобы время ответа не выдавало, есть ли такой пользователь.
-- `/api/auth/*` (кроме `me`) под rate limit.
+- `login` и `register` под rate limit: 20 запросов с IP за 15 минут.
+- Просроченные сессии не принимаются `requireAuth` и удаляются из таблицы при каждом входе.
 - Список сотрудников сортируется по ФИО. Пагинации нет — для задания не нужна, отмечено как развитие.
 - `departmentId` несуществующего отдела при создании → `400 VALIDATION_ERROR` с ошибкой у поля.
 
@@ -106,9 +107,10 @@ server/src/
 ├─ index.ts              точка входа: открыть БД, migrate, seed, listen
 ├─ app.ts                createApp({ db }) — сборка Express; без listen, удобно для supertest
 ├─ config.ts             переменные окружения с дефолтами
-├─ db/                   connection.ts (+ transaction), migrations.ts, migrate.ts, seed.ts
+├─ db/                   connection.ts (+ transaction), migrations.ts, migrate.ts, seed.ts,
+│                        sqlite.ts (приведение типов строк, распознавание UNIQUE)
 ├─ lib/                  errors.ts (AppError), password.ts (scrypt), session-token.ts
-├─ middleware/           require-auth.ts, validate.ts, error-handler.ts
+├─ middleware/           require-auth.ts, validate.ts (parseInput), error-handler.ts
 └─ modules/
    ├─ auth/              auth.router.ts → auth.service.ts → users.repository.ts, sessions.repository.ts
    ├─ departments/       departments.router.ts → departments.repository.ts
@@ -125,7 +127,7 @@ server/src/
 
 ```
 cookie sid ─► requireAuth ─► sha256(token) ─► sessions JOIN users ─► req.user
-          ─► validate(query) ─► employeesService.list ─► repository: LIKE по full_name_search
+          ─► parseInput(query) ─► employeesService.list ─► repository: LIKE по full_name_search
           ─► 200 { items }
 ```
 

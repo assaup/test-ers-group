@@ -41,6 +41,15 @@ export default defineConfig([
   },
 
   {
+    // supertest's res.body and expect.any() are typed `any` by design
+    files: ['**/tests/**/*.ts', '**/*.test.{ts,tsx}'],
+    rules: {
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+    },
+  },
+
+  {
     files: ['**/*.js'],
     extends: [tseslint.configs.disableTypeChecked],
     languageOptions: { globals: globals.node },

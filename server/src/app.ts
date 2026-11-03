@@ -1,13 +1,37 @@
-import express from 'express';
+import express, { type RequestHandler } from 'express';
+import { rateLimit } from 'express-rate-limit';
 import helmet from 'helmet';
+import { config } from './config';
 import type { Database } from './db/connection';
+import { AppError } from './lib/errors';
 import { errorHandler, notFoundHandler } from './middleware/error-handler';
+import { createRequireAuth } from './middleware/require-auth';
+import { createAuthRouter } from './modules/auth/auth.router';
+import { createAuthService } from './modules/auth/auth.service';
+import { createSessionsRepository } from './modules/auth/sessions.repository';
+import { createUsersRepository } from './modules/auth/users.repository';
 
 export interface AppDeps {
   db: Database;
+  secureCookies?: boolean;
+  sessionTtlSeconds?: number;
+  /** Requests per IP per 15 minutes on login/register; `false` disables the limit (tests). */
+  authRateLimit?: number | false;
 }
 
-export function createApp({ db }: AppDeps) {
+export function createApp({
+  db,
+  secureCookies = config.secureCookies,
+  sessionTtlSeconds = config.sessionTtlSeconds,
+  authRateLimit = config.authRateLimit,
+}: AppDeps) {
+  const authService = createAuthService({
+    users: createUsersRepository(db),
+    sessions: createSessionsRepository(db),
+    sessionTtlSeconds,
+  });
+  const requireAuth = createRequireAuth(authService);
+
   const app = express();
 
   app.use(helmet());
@@ -18,8 +42,36 @@ export function createApp({ db }: AppDeps) {
     res.json({ status: 'ok' });
   });
 
+  app.use(
+    '/api/auth',
+    createAuthRouter({
+      authService,
+      requireAuth,
+      rateLimit: createAuthRateLimit(authRateLimit),
+      sessionTtlSeconds,
+      secureCookies,
+    }),
+  );
+
   app.use('/api', notFoundHandler);
   app.use(errorHandler);
 
   return app;
+}
+
+function createAuthRateLimit(limit: number | false): RequestHandler {
+  if (limit === false) {
+    return (_req, _res, next) => {
+      next();
+    };
+  }
+  return rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit,
+    standardHeaders: 'draft-8',
+    legacyHeaders: false,
+    handler: (_req, _res, next) => {
+      next(new AppError(429, 'TOO_MANY_REQUESTS', 'Слишком много попыток, попробуйте позже'));
+    },
+  });
 }

@@ -2,7 +2,7 @@ import { createApp } from './app';
 import { config } from './config';
 import { openDatabase } from './db/connection';
 import { runMigrations } from './db/migrate';
-import { seedDatabase } from './db/seed';
+import { DEMO_USER, seedDatabase } from './db/seed';
 
 const db = openDatabase(config.dbPath);
 
@@ -11,9 +11,12 @@ if (applied.length > 0) {
   console.info(`Applied migrations: ${applied.join(', ')}`);
 }
 
-const { employeesAdded } = seedDatabase(db);
+const { employeesAdded, demoUserAdded } = await seedDatabase(db);
 if (employeesAdded > 0) {
   console.info(`Seeded ${employeesAdded} demo employees`);
+}
+if (demoUserAdded) {
+  console.info(`Seeded demo user ${DEMO_USER.email}`);
 }
 
 const server = createApp({ db }).listen(config.port, () => {
