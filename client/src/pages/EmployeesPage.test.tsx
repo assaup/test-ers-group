@@ -246,6 +246,28 @@ describe('EmployeesPage: filters from the URL', () => {
         .map((call) => call.query.toString()),
     ).toEqual(['']);
   });
+
+  it('never sends the old text after the search is cleared and retyped quickly', async () => {
+    const { calls } = mockApi(fakeEmployeesBackend().routes);
+    const { user } = renderApp('/employees');
+    const searchbox = await screen.findByRole('searchbox', { name: 'Поиск по ФИО' });
+    await screen.findByText('Найдено: 5');
+
+    await user.type(searchbox, 'ива');
+    await waitFor(() => {
+      expect(rowNames()).toEqual(['Иванова Анна Сергеевна']);
+    });
+    // Очищаем и сразу, быстрее задержки поиска, вводим новый текст
+    await user.clear(searchbox);
+    await user.type(searchbox, 'смир');
+
+    await waitFor(() => {
+      expect(rowNames()).toEqual(['Смирнова Ольга Викторовна']);
+    });
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    const searches = listCalls(calls).map((call) => call.query.get('search'));
+    expect(searches).toEqual([null, 'ива', null, 'смир']);
+  });
 });
 
 describe('EmployeesPage: adding an employee', () => {

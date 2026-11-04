@@ -31,6 +31,24 @@ describe('useDebouncedValue', () => {
     });
     expect(result.current).toBe('ива');
   });
+
+  it('applies an immediate value at once and starts the next input from it', () => {
+    const isEmpty = (value: string) => value === '';
+    const { result, rerender } = renderHook(({ value }) => useDebouncedValue(value, 300, isEmpty), {
+      initialProps: { value: 'ива' },
+    });
+
+    rerender({ value: '' });
+    expect(result.current).toBe('');
+
+    // Новый ввод меньше чем через 300 мс после очистки: старое «ива» не возвращается
+    rerender({ value: 'с' });
+    expect(result.current).toBe('');
+    act(() => {
+      vi.advanceTimersByTime(300);
+    });
+    expect(result.current).toBe('с');
+  });
 });
 
 describe('departmentTone', () => {

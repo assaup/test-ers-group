@@ -28,9 +28,9 @@ export function EmployeesPage() {
   const [selectedDepartment, setSelectedDepartment] = useState(
     () => readFilters(params).departmentId,
   );
-  const debouncedSearch = useDebouncedValue(searchInput.trim(), SEARCH_DEBOUNCE_MS);
-  // Очистка применяется сразу: сброс не должен отправить ещё один запрос со старым текстом
-  const search = searchInput.trim() ? debouncedSearch : '';
+  // Очистка применяется сразу: ни сброс фильтров, ни новый ввод после очистки не должны
+  // отправить ещё один запрос со старым текстом
+  const search = useDebouncedValue(searchInput.trim(), SEARCH_DEBOUNCE_MS, isEmpty);
 
   const departments = useRemoteData(employeesApi.departments);
   // Несуществующий отдел (старая ссылка, ?dept=999) отбрасывается, как только список отделов
@@ -220,4 +220,8 @@ export function EmployeesPage() {
 
 function isRejectedRequest(error: unknown) {
   return error instanceof ApiError && error.status === 400;
+}
+
+function isEmpty(value: string) {
+  return value === '';
 }
