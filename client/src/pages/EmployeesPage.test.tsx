@@ -188,8 +188,8 @@ describe('EmployeesPage: filters from the URL', () => {
     },
   );
 
-  it('drops a department that does not exist', async () => {
-    mockApi(fakeEmployeesBackend().routes);
+  it('drops a department that does not exist without ever querying it', async () => {
+    const { calls } = mockApi(fakeEmployeesBackend().routes);
 
     renderApp('/employees?dept=999&q=ов');
 
@@ -198,6 +198,38 @@ describe('EmployeesPage: filters from the URL', () => {
     });
     expect(await screen.findByText('Найдено: 5')).toBeInTheDocument();
     expect(screen.getByRole('combobox', { name: 'Отдел' })).toHaveValue('');
+    expect(listCalls(calls).map((call) => call.query.toString())).toEqual([
+      new URLSearchParams({ search: 'ов' }).toString(),
+    ]);
+  });
+
+  it('waits for the departments before loading a department from the link', async () => {
+    const { calls } = mockApi(fakeEmployeesBackend().routes);
+
+    renderApp('/employees?dept=1');
+
+    await waitFor(() => {
+      expect(rowNames()).toEqual(['Иванова Анна Сергеевна', 'Петров Дмитрий Олегович']);
+    });
+    const departmentsCall = calls.findIndex((call) => call.path === '/api/departments');
+    const firstListCall = calls.findIndex((call) => call.path === '/api/employees');
+    expect(departmentsCall).toBeLessThan(firstListCall);
+    expect(listCalls(calls).map((call) => call.query.get('departmentId'))).toEqual(['1']);
+  });
+
+  it('still applies the department from the link when departments fail to load', async () => {
+    const { routes } = fakeEmployeesBackend();
+    const { calls } = mockApi({
+      ...routes,
+      'GET /api/departments': apiError(500, 'INTERNAL_ERROR'),
+    });
+
+    renderApp('/employees?dept=1');
+
+    await waitFor(() => {
+      expect(rowNames()).toEqual(['Иванова Анна Сергеевна', 'Петров Дмитрий Олегович']);
+    });
+    expect(listCalls(calls).at(-1)?.query.get('departmentId')).toBe('1');
   });
 
   it('limits the search field to what the API accepts', async () => {

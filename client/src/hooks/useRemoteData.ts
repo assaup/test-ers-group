@@ -17,13 +17,15 @@ export type RemoteStatus = 'loading' | 'success' | 'error';
  * Вызывает `load` при каждом его изменении (передавайте useCallback) и по reload().
  * Новый запрос отменяет предыдущий, поэтому медленный устаревший ответ никогда
  * не перезапишет свежий. Во время перезагрузки последние данные остаются доступны.
+ * `load = null` — запрос пока рано отправлять (ещё не известны его параметры): статус «загрузка».
  */
-export function useRemoteData<T>(load: Loader<T>) {
+export function useRemoteData<T>(load: Loader<T> | null) {
   const [attempt, setAttempt] = useState(0);
   const [settled, setSettled] = useState<Settled<T>>();
   const [lastData, setLastData] = useState<T>();
 
   useEffect(() => {
+    if (!load) return;
     const controller = new AbortController();
     load(controller.signal).then(
       (data) => {
@@ -43,7 +45,7 @@ export function useRemoteData<T>(load: Loader<T>) {
   }, [load, attempt]);
 
   // «Загрузка» вычисляется, а не хранится: завершённый результат относится к более старому запросу
-  const isCurrent = settled?.load === load && settled.attempt === attempt;
+  const isCurrent = load !== null && settled?.load === load && settled.attempt === attempt;
   const status: RemoteStatus = !isCurrent ? 'loading' : settled.ok ? 'success' : 'error';
 
   const reload = useCallback(() => {

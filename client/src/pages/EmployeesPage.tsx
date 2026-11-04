@@ -40,6 +40,11 @@ export function EmployeesPage() {
     !departments.data ||
     departments.data.some((department) => department.id === selectedDepartment);
   const departmentId = departmentExists ? selectedDepartment : undefined;
+  // Пока отделы грузятся, неизвестно, существует ли отдел из ссылки: список не запрашиваем,
+  // чтобы не отправить лишний запрос с несуществующим отделом. Если отделы не загрузились,
+  // проверить нечего — фильтр применяется как есть
+  const departmentPending =
+    selectedDepartment !== undefined && departments.status === 'loading' && !departments.data;
 
   // Отражаем применённые фильтры в адресе; заодно это убирает из него невалидные значения
   useEffect(() => {
@@ -50,7 +55,7 @@ export function EmployeesPage() {
     (signal: AbortSignal) => employeesApi.list({ search, departmentId }, signal),
     [search, departmentId],
   );
-  const employees = useRemoteData(loadEmployees);
+  const employees = useRemoteData(departmentPending ? null : loadEmployees);
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [toast, setToast] = useState<string>();
