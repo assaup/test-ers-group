@@ -4,14 +4,19 @@ import { fileURLToPath } from 'node:url';
 const defaultDbPath = fileURLToPath(new URL('../data/app.db', import.meta.url));
 const defaultClientDir = fileURLToPath(new URL('../../client/dist', import.meta.url));
 
+// Сборка tsup вшивает NODE_ENV=production: `npm start` — это production, а `npm run dev` — нет.
+// В разработке клиент отдаёт Vite, и устаревшую сборку из client/dist отдавать нельзя
+const isProduction = process.env.NODE_ENV === 'production';
+
 export const config = {
-  port: Number(process.env.PORT ?? 3000),
+  // PORT — всегда порт, который открывает пользователь: в production это сам сервер, а в
+  // разработке — Vite. Поэтому dev-сервер API слушает отдельный API_PORT, иначе превью или
+  // хостинг, передающий PORT, запустили бы API и Vite на одном порту
+  port: Number((isProduction ? process.env.PORT : process.env.API_PORT) ?? 3000),
   dbPath: process.env.DB_PATH ?? defaultDbPath,
   /** Отдаётся только в production и только если клиент собран (`npm run build`). */
   clientDir: process.env.CLIENT_DIR ?? defaultClientDir,
-  // Сборка tsup вшивает NODE_ENV=production: `npm start` — это production, а `npm run dev` — нет.
-  // В разработке клиент отдаёт Vite, и устаревшую сборку из client/dist отдавать нельзя
-  isProduction: process.env.NODE_ENV === 'production',
+  isProduction,
   // Включается явно и только за HTTPS: флаг Secure у cookie сессии, HSTS и
   // upgrade-insecure-requests. По обычному HTTP (локальная сеть, сервер без TLS) любой из них ломает приложение
   secureCookies: process.env.SECURE_COOKIES === 'true',
