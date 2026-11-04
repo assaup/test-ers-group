@@ -36,8 +36,8 @@ export function AddEmployeeDialog({
   onCreated,
 }: AddEmployeeDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
-  // Увеличивается при каждой отправке и каждом закрытии: ответ для старого значения игнорируется,
-  // поэтому запрос, завершившийся после закрытия диалога, не затронет следующий черновик
+  // Увеличивается при каждой отправке и каждом закрытии. По нему видно, что ответ пришёл уже
+  // после закрытия диалога: такой ответ не должен трогать форму и следующий черновик
   const requestIdRef = useRef(0);
   const { values, bindForm, field, showErrors, reset } = useFormFields(INITIAL);
   const [formError, setFormError] = useState<string>();
@@ -87,9 +87,12 @@ export function AddEmployeeDialog({
     const requestId = ++requestIdRef.current;
     try {
       const employee = await employeesApi.create(parsed.data);
-      if (requestId !== requestIdRef.current) return;
+      // Сотрудник уже сохранён, даже если диалог успели закрыть: страница всё равно должна
+      // обновить список и показать уведомление, иначе пользователь добавит его ещё раз
       onCreated(employee);
+      if (requestId === requestIdRef.current) dialogRef.current?.close();
     } catch (error) {
+      // Ошибку показывать некуда: диалог закрыт, а в новом открытии она была бы чужой
       if (requestId !== requestIdRef.current) return;
       if (error instanceof ApiError && Object.keys(error.fields).length > 0) {
         showErrors(error.fields);

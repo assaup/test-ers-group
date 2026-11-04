@@ -340,14 +340,23 @@ describe('EmployeesPage: adding an employee', () => {
 });
 
 describe('EmployeesPage: dialog edge cases', () => {
+  interface MockResponse {
+    status: number;
+    body?: unknown;
+  }
+
+  /** Открывает диалог и отправляет форму; сервер ответит, только когда тест вызовет finish(). */
   async function openWithSlowSave() {
     const { routes } = fakeEmployeesBackend();
-    let finish: ((response: { status: number; body?: unknown }) => void) | undefined;
+    let release: ((response?: MockResponse) => void) | undefined;
     mockApi({
       ...routes,
-      'POST /api/employees': () =>
-        new Promise((resolve) => {
-          finish = resolve;
+      'POST /api/employees': (call) =>
+        new Promise<MockResponse>((resolve) => {
+          // Без аргумента запрос уходит в фейковый бэкенд и сотрудник действительно создаётся
+          release = (response) => {
+            resolve(response ?? routes['POST /api/employees'](call));
+          };
         }),
     });
     const { user } = renderApp('/employees');
@@ -361,7 +370,7 @@ describe('EmployeesPage: dialog edge cases', () => {
     return {
       user,
       dialog: dialog as HTMLDialogElement,
-      finish: (response: { status: number; body?: unknown }) => finish?.(response),
+      finish: (response?: MockResponse) => release?.(response),
     };
   }
 
@@ -378,7 +387,32 @@ describe('EmployeesPage: dialog edge cases', () => {
     expect(dialog).toBeVisible();
   });
 
-  it('ignores a response that arrives after the dialog was closed anyway', async () => {
+  it('still confirms a save that finishes after the dialog was closed anyway', async () => {
+    const { dialog, finish } = await openWithSlowSave();
+
+    // Chrome закрывает модальное окно по повторному Esc, игнорируя preventDefault
+    dialog.close();
+    finish();
+
+    expect(await screen.findByRole('status')).toHaveTextContent('Сотрудник добавлен');
+    expect(await screen.findByText('Новый Сотрудник')).toBeInTheDocument();
+    expect(screen.getByText('Найдено: 6')).toBeInTheDocument();
+  });
+
+  it('keeps a dialog reopened for the next employee when the previous save finishes', async () => {
+    const { user, dialog, finish } = await openWithSlowSave();
+    dialog.close();
+    await user.click(screen.getByRole('button', { name: 'Добавить сотрудника' }));
+    await user.type(within(dialog).getByLabelText(/ФИО/), 'Следующий');
+
+    finish();
+
+    expect(await screen.findByRole('status')).toHaveTextContent('Сотрудник добавлен');
+    expect(dialog).toBeVisible();
+    expect(within(dialog).getByLabelText(/ФИО/)).toHaveValue('Следующий');
+  });
+
+  it('drops an error that arrives after the dialog was closed anyway', async () => {
     const { user, dialog, finish } = await openWithSlowSave();
 
     // Браузер всё равно может принудительно закрыть модальное окно (например, повторный Esc)

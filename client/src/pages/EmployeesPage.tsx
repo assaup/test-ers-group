@@ -75,8 +75,9 @@ export function EmployeesPage() {
     setSelectedDepartment(undefined);
   }
 
+  // Диалог закрывается сам; здесь — только то, что касается списка. Ответ может прийти и после
+  // закрытия, когда пользователь уже открыл диалог заново, — новый черновик это не трогает
   function handleCreated(employee: Employee) {
-    setDialogOpen(false);
     setToast('Сотрудник добавлен');
     setHighlightedId(employee.id);
     employees.reload();
